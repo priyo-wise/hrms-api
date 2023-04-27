@@ -6,7 +6,7 @@ const statcModel = require("../models/staticModel");
 const roles = require("../models/Roles");
 const RolePermission = require("../models/RolePermission");
 const Permission = require("../models/Permission");
-const utility = require("../models/utility");
+const utility = require("../models/Utility");
 
 /* GET RolePermission */
 router.get("/Fetch", middleware.authorize, async (req, res, next) => {
