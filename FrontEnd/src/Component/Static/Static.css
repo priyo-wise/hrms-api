@@ -1,0 +1,51 @@
+.css-serial {
+  counter-reset: serial-number;
+  /* Set the serial number counter to 0 */
+}
+
+.css-serial td:first-child:before {
+  counter-increment: serial-number;
+  /* Increment the serial number counter */
+  content: counter(serial-number);
+  /* Display the counter */
+}
+.table-td-center {
+  text-align: center;
+  min-width: 50px;
+}
+.table-td-left {
+  text-align: left !important;
+  min-width: 50px !important;
+  text-align: justify !important;
+}
+.table td {
+  text-align: center;
+  min-width: 50px;
+  word-break: break-all;
+}
+.table th {
+  text-align: center;
+  font-style: normal;
+  font-weight: 900;
+}
+.td-width-5 {
+  width: 500px !important;
+}
+.td-width-3 {
+  width: 300px !important;
+}
+.td-width-4 {
+  width: 400px !important;
+}
+.td-width-1 {
+  width: 100px !important;
+}
+.td-width-2 {
+  width: 200px !important;
+}
+.td-width-50 {
+  width: 50px !important;
+}
+.td-width-80 {
+  width: 80px !important;
+}
