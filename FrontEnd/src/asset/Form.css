@@ -1,0 +1,17 @@
+.error {
+    color: red;
+}
+
+.error input{
+    border-color: red;
+}
+.error input:focus{
+    border-color: red;
+}
+
+.error textarea{
+    border-color: red;
+}
+.error textarea:focus{
+    border-color: red;
+}
