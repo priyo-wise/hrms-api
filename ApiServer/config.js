@@ -4,7 +4,7 @@ const config = {
     host: "database-1.c0cm6ge9cesl.us-east-1.rds.amazonaws.com",
     user: "wise_employee",
     password: "Wise!202322",
-    database: "wiseemployee",
+    database: "employees",
     timezone: "utc",
   },
   listPerPage: 10,
