@@ -35,8 +35,8 @@ async function CreateEmployeeManager(
     );
 
     if (result.affectedRows) {
-      const empcode="Emp00"+ EmployeeId;
-      console.log("empcode",empcode);
+      const empcode = "Emp00" + EmployeeId;
+      console.log("empcode", empcode);
       result2 = await db.query(
         `UPDATE employees SET StatusId = 3 ,EmployeeCode='${empcode}' WHERE (EmployeeId = '${EmployeeId}')`
       );
@@ -90,7 +90,7 @@ where rls.roleId=${roleId}`
 }
 async function getMultiple(page = 1) {
   const offset = helper.getOffset(page, config.listPerPage);
-  const rows = await db.query(`SELECT * FROM Employees`);
+  const rows = await db.query(`SELECT * FROM employees`);
   const data = helper.emptyOrRows(rows);
   const meta = { page };
 
