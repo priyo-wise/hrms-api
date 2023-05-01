@@ -26,25 +26,41 @@ router.get("/Fetch", middleware.authorize, async (req, res, next) => {
 router.get("/FetchAll/:id/:date", middleware.authorize, async (req, res) => {
   let timeSheetDate = req.params.date;
   let data = {
-    TimeSheet: await TimeSheet.fetchById(req.params.id),
+    TimeSheet: await TimeSheet.fetchById(req.params.id).catch((e) => {
+      throw e;
+    }),
     EmployeeId: session.getLoggedUser(req),
   };
   if (data.TimeSheet.length > 0) data.TimeSheet = data.TimeSheet[0];
   else data.TimeSheet = {};
   if (data.TimeSheet.EmployeeId == session.getLoggedUser(req)) {
     timeSheetDate = data.TimeSheet.Date.toISOString();
-    data.users = await userProfile.getUserProfile(data.TimeSheet.EmployeeId);
+    data.users = await userProfile
+      .getUserProfile(data.TimeSheet.EmployeeId)
+      .catch((e) => {
+        throw e;
+      });
   } else {
-    data.users = await userProfile.getMultiple();
+    data.users = await userProfile.getMultiple().catch((e) => {
+      throw e;
+    });
   }
-  let holiday = await db.query(
-    `SELECT count(HolidayDate) as HolidayCount, HolidayName FROM holidaymaster where HolidayDate = '${timeSheetDate}'`
-  );
-  let approvedLeave = await db.query(
-    `SELECT count(LeavesId)  as Leaves, DATE_FORMAT(LeaveFromDate,'%d-%m-%y') as LeaveFromDate,  DATE_FORMAT(LeaveToDate,'%d-%m-%y') as LeaveToDate
+  let holiday = await db
+    .query(
+      `SELECT count(HolidayDate) as HolidayCount, HolidayName FROM holidaymaster where HolidayDate = '${timeSheetDate}'`
+    )
+    .catch((e) => {
+      throw e;
+    });
+  let approvedLeave = await db
+    .query(
+      `SELECT count(LeavesId)  as Leaves, DATE_FORMAT(LeaveFromDate,'%d-%m-%y') as LeaveFromDate,  DATE_FORMAT(LeaveToDate,'%d-%m-%y') as LeaveToDate
      FROM employeeleaves WHERE '${timeSheetDate}' between LeaveFromDate and LeaveToDate
       and EmployeeId=3 and ApprovalStatusId=3`
-  );
+    )
+    .catch((e) => {
+      throw e;
+    });
 
   data.users = data.users.data;
   data.holiday = holiday;
