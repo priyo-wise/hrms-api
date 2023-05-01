@@ -1,9 +1,9 @@
 const config = {
   db: {
     /* don't expose password or any sensitive info, done only for demo */
-    host: "localhost",
-    user: "root",
-    password: "",
+    host: "database-1.c0cm6ge9cesl.us-east-1.rds.amazonaws.com",
+    user: "wise_employee",
+    password: "Wise!202322",
     database: "employees",
     timezone: "utc",
   },
