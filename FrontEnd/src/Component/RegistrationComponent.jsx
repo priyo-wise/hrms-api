@@ -45,6 +45,7 @@ import Swal from "sweetalert2";
 import _, { extend, filter, omit, where } from "underscore";
 import { dataClone } from "../Services/UtilityService";
 import { StandardConst } from "../Services/StandardConst";
+import { map } from "underscore";
 const requiredMessage = StandardConst.requiredMessage;
 const numberError = StandardConst.numberError;
 const mobileMessage = StandardConst.mobileMessage;
@@ -77,10 +78,17 @@ export default function Register() {
     File: null,
   });
   const [employeeDocuments, setEmployeeDocuments] = useState([]);
+  const [employeeQualificationsData, setEmployeeQualificationsData] = useState([]);
   const [EmployeeId, setEmployeeId] = useState(0);
   const [showFinalSubmit, setShowFinalSubmit] = useState(0);
-  const [passwordValues, setPasswordValues] = useState({ password: "", showPassword: false,});
-  const [confirmpasswordValues, setConfirmPasswordValues] = useState({ password: "", showPassword: false,});
+  const [passwordValues, setPasswordValues] = useState({
+    password: "",
+    showPassword: false,
+  });
+  const [confirmpasswordValues, setConfirmPasswordValues] = useState({
+    password: "",
+    showPassword: false,
+  });
   const QualificationsData = [
     { text: "MCA", value: "MCA" },
     { text: "MA", value: "MA" },
@@ -90,31 +98,31 @@ export default function Register() {
     { text: "Work From Home", value: "Work From Home" },
     { text: "Work From Office", value: "Work From Office" },
   ];
-  const [nametxt, setFullName] = useState('');
-  const [fatherNametxt, setFatherName] = useState('');
-  const [motherNmetxt, setMotherName] = useState('');
- 
+  const [nametxt, setFullName] = useState("");
+  const [fatherNametxt, setFatherName] = useState("");
+  const [motherNmetxt, setMotherName] = useState("");
+
   const re = /^[A-Z a-z]+$/;
-  const onNameInputChange = e => {
+  const onNameInputChange = (e) => {
     const { value } = e.target;
-    
+
     if (value === "" || re.test(value)) {
       setFullName(value);
     }
-  }
-  const onMnameInputChange = e => {
+  };
+  const onMnameInputChange = (e) => {
     const { value } = e.target;
     if (value === "" || re.test(value)) {
       setMotherName(value);
     }
-  }
-  const onFnameInputChange = e => {
+  };
+  const onFnameInputChange = (e) => {
     const { value } = e.target;
-    
+
     if (value === "" || re.test(value)) {
       setFatherName(value);
     }
-  }
+  };
   const schemaStep1 = yup
     .object()
     .shape({
@@ -125,18 +133,21 @@ export default function Register() {
   const schema = yup
     .object()
     .shape({
-      FullName:yup.string()
-      .required(requiredMessage)
-      .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
-      MotherName:yup.string()
-      .required(requiredMessage)
-      .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
-      FatherName:yup.string()
-      .required(requiredMessage)
-      .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
-     // FullName: yup.string().trim().required(requiredMessage),
+      FullName: yup
+        .string()
+        .required(requiredMessage)
+        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
+      MotherName: yup
+        .string()
+        .required(requiredMessage)
+        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
+      FatherName: yup
+        .string()
+        .required(requiredMessage)
+        .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
+      // FullName: yup.string().trim().required(requiredMessage),
       //MotherName: yup.string().trim().required(requiredMessage),
-     // FatherName: yup.string().trim().required(requiredMessage),
+      // FatherName: yup.string().trim().required(requiredMessage),
       DOB: yup.date().typeError(requiredMessage).required(requiredMessage),
       Phone: yup
         .number()
@@ -167,32 +178,41 @@ export default function Register() {
       WorkLocation: yup.string().trim().required(requiredMessage),
     })
     .required();
-   
-    const handleClickShowPassword = () => {
-      setPasswordValues({ ...passwordValues, showPassword: !passwordValues.showPassword });
-    };
-    
-    const handleMouseDownPassword = (event) => {
-      event.preventDefault();
-    };
-    
-    const handlePasswordChange = (prop) => (event) => {
-      setPasswordValues({ ...passwordValues, [prop]: event.target.value });
-    };
-  
-    const handleClickShowConfirmPassword = () => {
-      setConfirmPasswordValues({ ...confirmpasswordValues, showPassword: !confirmpasswordValues.showPassword });
-    };
-    
-    const handleMouseDownConfirmPassword = (event) => {
-      event.preventDefault();
-    };
-    
-    const handleConfirmPasswordChange = (prop) => (event) => {
-      setConfirmPasswordValues({ ...confirmpasswordValues, [prop]: event.target.value });
-    };
-  
-    const handleSweetAlert = (Message, Title) => {
+
+  const handleClickShowPassword = () => {
+    setPasswordValues({
+      ...passwordValues,
+      showPassword: !passwordValues.showPassword,
+    });
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const handlePasswordChange = (prop) => (event) => {
+    setPasswordValues({ ...passwordValues, [prop]: event.target.value });
+  };
+
+  const handleClickShowConfirmPassword = () => {
+    setConfirmPasswordValues({
+      ...confirmpasswordValues,
+      showPassword: !confirmpasswordValues.showPassword,
+    });
+  };
+
+  const handleMouseDownConfirmPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const handleConfirmPasswordChange = (prop) => (event) => {
+    setConfirmPasswordValues({
+      ...confirmpasswordValues,
+      [prop]: event.target.value,
+    });
+  };
+
+  const handleSweetAlert = (Message, Title) => {
     Swal.fire({
       title: Title.charAt(0).toUpperCase() + Title.slice(1),
       html: Message,
@@ -218,7 +238,6 @@ export default function Register() {
       endPoint: `DocumentType/DocumentDetails/${EmployeeId}`,
       dispatch,
     });
-    console.log("DOcument",data);
     setEmployeeDocuments(data);
     if (data?.length > 0) {
       setShowFinalSubmit("d-flex float-end");
@@ -226,6 +245,17 @@ export default function Register() {
       setShowFinalSubmit("d-flex float-end d-none");
     }
   };
+
+  const getQualification = async () => {
+    const data ={
+      EmpQualification: await WebService({
+      endPoint: `CommonUtility/static_qualification_master?select=QualificationId,DisplayQualification`, dispatch,
+    }).then((c) => map(c, (m) => ({ value: m.QualificationId, text: m.DisplayQualification }))),
+  };
+    console.log("QF",data);
+    setEmployeeQualificationsData(data.EmpQualification);
+  };
+
   const renderAfterCalled = useRef(false);
   useEffect(() => {
     if (!renderAfterCalled.current) {
@@ -234,8 +264,7 @@ export default function Register() {
     renderAfterCalled.current = true;
   }, []);
   useEffect(() => {
-    if(((CompanyInfo??{}).CompanyId??0)!=0)
-      getDocumentType();
+    if (((CompanyInfo ?? {}).CompanyId ?? 0) != 0) getDocumentType();
   }, [CompanyInfo]);
 
   const onSubmitDocument = async (data) => {
@@ -277,8 +306,8 @@ export default function Register() {
           " Registered On " +
           info[0].TimeStamp +
           " Waiting for approval ";
-        Notification.Route = "RegistrationApproval";        
-        Notification.Status = 5;      
+        Notification.Route = "RegistrationApproval";
+        Notification.Status = 5;
         Notification.EmployeeId = EmployeeId;
         Notification.RoleId = 7;
         console.log(Notification);
@@ -295,14 +324,14 @@ export default function Register() {
       console.log(error);
     }
   };
-      // onClick={async () => {
-                              //   await WebService({
-                              //     dispatch,
-                              //     endPoint: `User/Document/${data.DocumentId}`,
-                              //     method: "DELETE",
-                              //   });
-                              //   await getDocuments();
-                              // }}                       
+  // onClick={async () => {
+  //   await WebService({
+  //     dispatch,
+  //     endPoint: `User/Document/${data.DocumentId}`,
+  //     method: "DELETE",
+  //   });
+  //   await getDocuments();
+  // }}
   const onDelete = async (DocumentId) => {
     await WebService({
       dispatch,
@@ -313,10 +342,11 @@ export default function Register() {
     await getDocuments();
   };
   const onSubmit = async (data) => {
-    console.log("data",data);
+    console.log("data", data);
     if ((data?.DOB || "") !== "")
-    data.DOB = format(new Date(data.DOB), "yyyy-MM-dd");
+      data.DOB = format(new Date(data.DOB), "yyyy-MM-dd");
     setRegisterData(data);
+    getQualification();
     handleNext();
   };
 
@@ -324,12 +354,15 @@ export default function Register() {
     setRegisterData(data);
 
     await WebService({
-      endPoint: `registration/create/${EmployeeId}/${(CompanyInfo??{}).CompanyId}`,
+      endPoint: `registration/create/${EmployeeId}/${
+        (CompanyInfo ?? {}).CompanyId
+      }`,
       body: data,
       dispatch,
     }).then((data) => {
       setEmployeeId(data.data.EmployeeId);
       getDocuments();
+      getQualification();
       handleNext();
     });
   };
@@ -376,7 +409,7 @@ export default function Register() {
   const [documentData, setDocumentData] = useState([]);
   const getDocumentType = () => {
     WebService({
-      endPoint: `DocumentType/Fetch?CompanyId=${(CompanyInfo??{}).CompanyId}`,
+      endPoint: `DocumentType/Fetch?CompanyId=${(CompanyInfo ?? {}).CompanyId}`,
       dispatch,
     }).then((data) => {
       setDocumentData(
@@ -519,19 +552,20 @@ export default function Register() {
                     label="Full Name"
                     name="FullName"
                     maxLength={40}
-                    type="text"                    
-                   // value={nametxt}
+                    type="text"
+                    // value={nametxt}
                     //onChange={onNameInputChange}
                   />
                 </div>
 
                 <div className="col-md-6">
-                  <FormInputText 
-                  label="Date of birth"
-                   name="DOB" 
-                  // max="2999-12-31"                    
-                   max={new Date().toISOString().split("T")[0]}
-                   type="date" />
+                  <FormInputText
+                    label="Date of birth"
+                    name="DOB"
+                    // max="2999-12-31"
+                    max={new Date().toISOString().split("T")[0]}
+                    type="date"
+                  />
                 </div>
               </div>
               <div className="row">
@@ -541,7 +575,7 @@ export default function Register() {
                     name="MotherName"
                     maxLength={40}
                     type="text"
-                   // value={motherNmetxt}
+                    // value={motherNmetxt}
                     //onChange={onMnameInputChange}
                   />
                 </div>
@@ -562,7 +596,7 @@ export default function Register() {
                     name="FatherName"
                     type="text"
                     maxLength={40}
-                   // value={fatherNametxt}
+                    // value={fatherNametxt}
                     //onChange={onFnameInputChange}
                   />
                 </div>
@@ -630,42 +664,51 @@ export default function Register() {
                     <FormInputText
                       label="Password"
                       name="Password"
-                     // type="password"
+                      // type="password"
                       type={passwordValues.showPassword ? "text" : "password"}
                       //onChange={handlePasswordChange("password")}
-                      //value={passwordValues.password}                                                                  
+                      //value={passwordValues.password}
                     />
-                     <IconButton
-              onClick={handleClickShowPassword}
-              onMouseDown={handleMouseDownPassword}
-            >
-              {passwordValues.showPassword ? <Visibility /> : <VisibilityOff />}
-            </IconButton>
-                    
+                    <IconButton
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                    >
+                      {passwordValues.showPassword ? (
+                        <Visibility />
+                      ) : (
+                        <VisibilityOff />
+                      )}
+                    </IconButton>
                   </div>
                   <div className="col-md-6">
                     <FormInputText
                       label="Confirm Password"
                       name="ConfirmPassword"
-                     // type="password"
-                      type={confirmpasswordValues.showPassword ? "text" : "password"}
+                      // type="password"
+                      type={
+                        confirmpasswordValues.showPassword ? "text" : "password"
+                      }
                       //onChange={handleConfirmPasswordChange("password")}
-                     // value={confirmpasswordValues.password}    
-                    /> 
+                      // value={confirmpasswordValues.password}
+                    />
                     <IconButton
-                    onClick={handleClickShowConfirmPassword}
-                    onMouseDown={handleMouseDownConfirmPassword}
-                    position="end"
-                  >
-                    {confirmpasswordValues.showPassword ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
+                      onClick={handleClickShowConfirmPassword}
+                      onMouseDown={handleMouseDownConfirmPassword}
+                      position="end"
+                    >
+                      {confirmpasswordValues.showPassword ? (
+                        <Visibility />
+                      ) : (
+                        <VisibilityOff />
+                      )}
+                    </IconButton>
                   </div>
                 </div>
                 <div className="row">
                   <div className="col-md-6">
                     <FormInputDropdown
-                      name="Qualifications"
-                      ddOpt={QualificationsData}
+                      name="QualificationId"
+                      ddOpt={employeeQualificationsData}
                       label="Select Qualifications"
                     ></FormInputDropdown>
                   </div>
@@ -717,9 +760,7 @@ export default function Register() {
                         <div className="col-md-6">
                           <FormInputDropdown
                             name="DocumentTypeId"
-                            ddOpt={[{ value: null, text: "" }].concat(
-                              fnRemaningDocType()
-                            )}
+                            ddOpt={fnRemaningDocType() }
                             label="Select Document"
                           ></FormInputDropdown>
                         </div>
@@ -770,7 +811,7 @@ export default function Register() {
                             </IconButton>
                           </>
                         );
-                        return (                          
+                        return (
                           <ListItem
                             secondaryAction={deleteAction}
                             primaryAction={deleteAction}
@@ -780,16 +821,23 @@ export default function Register() {
                                 <FileIcon />
                               </Avatar>
                             </ListItemAvatar>
-                            <ListItemText primary={data.DocumentType} />
-                            <ListItemText className="text-align:left" primary={data.Number} />
+                            <ListItemText>
+                              {data.DocumentType} - {data.Number}
+                            </ListItemText>
                           </ListItem>
                         );
                       })}
                     </List>
                   </Demo>
                 </Grid>
-                <SnackbarComponent ref={refSnackbar} confirmMessage="Document Deleted successfully" />
-                <DeleteConfirmAlert ref={ref} confirmEvent={(v) => onDelete(v)} />
+                <SnackbarComponent
+                  ref={refSnackbar}
+                  confirmMessage="Document Deleted successfully"
+                />
+                <DeleteConfirmAlert
+                  ref={ref}
+                  confirmEvent={(v) => onDelete(v)}
+                />
               </div>
             </Form>
             <div className="row">
@@ -840,7 +888,13 @@ export default function Register() {
       <div class="ibox-content m-b-sm border-bottom">
         <div class="col-md-9">
           <div class="logo-icon">
-            <img src={`${StandardConst.apiBaseUrl}/uploads/${(CompanyInfo??{}).Logo??""}`} alt="logo" className="img-size" />
+            <img
+              src={`${StandardConst.apiBaseUrl}/uploads/${
+                (CompanyInfo ?? {}).Logo ?? ""
+              }`}
+              alt="logo"
+              className="img-size"
+            />
           </div>
           <h2>Employee Registration</h2>
           <div class="forum-sub-title">Description</div>

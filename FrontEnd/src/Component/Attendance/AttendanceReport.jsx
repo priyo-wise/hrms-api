@@ -12,7 +12,8 @@ import { DateTime, Info } from "luxon";
 import _ from "underscore";
 import TableComponent from "../../Services/TableComponent";
 import { ActionPermission, PageInfo } from "../PageInfo";
-
+import { Box } from "@mui/material";
+import BreadcrumbsComponent from "../../Services/BreadcrumbsComponent";
 const AttendanceReport = () => {
   PageInfo({ pageTitle: "Attendance Report" });
 
@@ -148,56 +149,55 @@ const AttendanceReport = () => {
     <>
       {data === null && (
         <div>
-          <h3 class="px-4">Attendance Report</h3>
-        <div style={{ backgroundColor: "#1976D2" }} className="pt-4 px-4">            
-              <Form
-                defaultValues={filter}
-                onSubmit={onSubmit}
-                validationSchema={schema}
-              >
-                <Row>
-                  <Col className="col-md-3">
-                    <FormInputText
-                      label="From Date"
-                      name="FromDate"
-                      type="date"
-                      labelCss="text-light"
-                      setValue={setFromdate}
-                      max={(todate ?? "") == "" ? undefined : todate}
-                    />
-                  </Col>
-                  <Col className="col-md-3">
-                    <FormInputText
-                      label="To Date"
-                      name="ToDate"
-                      labelCss="text-light"
-                      type="date"
-                      setValue={setTodate}
-                      min={(fromdate ?? "") == "" ? undefined : fromdate}
-                    />
-                  </Col>
-                  <Col className="col-md-3">
-                    <FormInputDropdown
-                      name="EmployeeId"
-                      ddOpt={persons ?? []}
-                      label="Person"
-                      labelCss="text-light"
-                    />
-                  </Col>
-                  <Col className="col-md-3">
+          <div style={{ backgroundColor: "#1976D2" }} className="pt-4 px-4">
+            <Form
+              defaultValues={filter}
+              onSubmit={onSubmit}
+              validationSchema={schema}
+            >
+              <Row>
+                <Col className="col-md-3">
+                  <FormInputText
+                    label="From Date"
+                    name="FromDate"
+                    type="date"
+                    labelCss="text-light"
+                    setValue={setFromdate}
+                    max={(todate ?? "") == "" ? undefined : todate}
+                  />
+                </Col>
+                <Col className="col-md-3">
+                  <FormInputText
+                    label="To Date"
+                    name="ToDate"
+                    labelCss="text-light"
+                    type="date"
+                    setValue={setTodate}
+                    min={(fromdate ?? "") == "" ? undefined : fromdate}
+                  />
+                </Col>
+                <Col className="col-md-3">
+                  <FormInputDropdown
+                    name="EmployeeId"
+                    ddOpt={persons ?? []}
+                    label="Person"
+                    labelCss="text-light"
+                  />
+                </Col>
+                <Col className="col-md-3">
                   <Button
                     id="btnRunReport"
                     variant="outline-light"
                     type="submit"
                     className="float-end"
                   >
-                  Run Report
-                </Button>
-              </Col>
-                </Row>
-              </Form>
-        </div>
+                    Run Report
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
           </div>
+        </div>
       )}
     </>
   );
@@ -253,17 +253,31 @@ const AttendanceReport = () => {
       )}
     </>
   );
+  const MasterPageName = "Attendance Report";
+  const [bData, setBData] = React.useState([
+    {
+      title: "Attendance Report",
+      hrefLink: "#",
+    },
+    {
+      title: "Report",
+      hrefLink: "#",
+    },
+  ]);
   return (
     <>
-      <Container
-        fluid
-        className="p-4"
-        style={{
-          backgroundColor: "#FFF",
-          borderRadius: "10px ",
-          margin: "10px",
-        }}
-      >
+      <Container fluid className="base-container">
+        <Box
+          sx={{
+            width: 1,
+            height: 80,
+          }}
+        >
+          <h3 className="ms-4 mt-2">{MasterPageName}</h3>
+          <div className="ms-4">
+            <BreadcrumbsComponent bData={bData}></BreadcrumbsComponent>
+          </div>
+        </Box>
         {filterComponent}
         {reportResultComponent}
       </Container>

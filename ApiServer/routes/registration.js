@@ -4,6 +4,7 @@ const Registration = require("../models/registartion");
 const middleware = require("../service/middleware");
 const { fetch, create } = require("../models/Utility");
 const { pick, extend } = require("underscore");
+const { v4: uuidv4 } = require("uuid");
 
 router.post("/checkEmployee/:step", async function (req, res, next) {
   try {
@@ -91,6 +92,7 @@ router.post("/Company", async (req, res, next) => {
       });
     //#endregion
     //#region Company Registration
+    req.body.Code = uuidv4();
     req.body.CompanyId = await create(
       JSON.parse(JSON.stringify(req.body)),
       "companyinformation"
@@ -121,18 +123,7 @@ router.post("/Company", async (req, res, next) => {
     //#endregion
 
     //#region Company Guid return
-    res.json(
-      await fetch(
-        "companyinformation",
-        { CompanyId: req.body.CompanyId },
-        true,
-        ["Code"]
-      )
-        .then((c) => c.Code ?? "")
-        .catch((err) => {
-          throw err;
-        })
-    );
+    res.json(req.body.Code);
     //#endregion
   } catch (err) {
     res.status(400).json({ Error: err.message });

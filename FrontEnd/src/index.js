@@ -59,6 +59,7 @@ import BankDetails from "./Component/Static/BankDetails";
 import EmployeeIdCard from "./Component/EmployeeIdCard/EmployeeIdCardComponent";
 import ProjectRoleMaster from "./Component/Static/StaticProjectRoleComponent"
 import CompanyRegistration from "./Component/Company/CompanyRegistration";
+import Qualification from "./Component/Static/StaticQualificationMaster";
 import {Loader} from "./Services/Loader";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -113,6 +114,7 @@ root.render(
             <Route path="BankDetails" element={<BankDetails />} />
             <Route path="EmployeeIdCard" element={<EmployeeIdCard />} />
             <Route path="ProjectRoleMaster" element={<ProjectRoleMaster />} />
+            <Route path="Qualification" element={<Qualification />}/>
             <Route
               path="RegistrationApproval"
               element={<RegistrationApproval />}

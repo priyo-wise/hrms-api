@@ -282,7 +282,7 @@ const DashboardComponent = () => {
                                             {data.ProjectId ==
                                             managerData.ProjectId
                                               ? managerData.FullName
-                                              : "No Manager Assigned yet"}{" "}
+                                              : ""}{" "}
                                           </span>
                                         );
                                       })}

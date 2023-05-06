@@ -13,14 +13,14 @@ async function CreateEmployeeManager(
   let message = "Error in Manager Mapping";
   var result2,
     resultReject = "";
-  const getEmployeeNotification = await db.query(
-    `select * from employeeactionnotification where EmployeeId=${EmployeeId} and Status=5`
-  );
-  if (getEmployeeNotification.length >= 1) {
-    await db.query(
-      `UPDATE employeeactionnotification SET Status = ${Status} WHERE EmployeeId = ${EmployeeId}`
+    const getEmployeeNotification = await db.query(
+      `select * from employeeactionnotification where EmployeeId=${EmployeeId} and Status=5`
     );
-  }
+    if (getEmployeeNotification.length >= 1) {
+      await db.query(
+        `UPDATE employeeactionnotification SET Status = ${Status} WHERE EmployeeId = ${EmployeeId}`
+      );
+    }
   const rows = await db.query(
     `select * from employeedocuments where EmployeeId=${EmployeeId} and StatusId=5`
   );
@@ -43,8 +43,8 @@ async function CreateEmployeeManager(
     );
 
     if (result.affectedRows) {
-      const empcode = "Emp00" + EmployeeId;
-      console.log("empcode", empcode);
+      const empcode="Emp00"+ EmployeeId;
+      console.log("empcode",empcode);
       result2 = await db.query(
         `UPDATE employees SET StatusId = 3 ,EmployeeCode='${empcode}' WHERE (EmployeeId = '${EmployeeId}')`
       );
@@ -98,7 +98,7 @@ where rls.roleId=${roleId}`
 }
 async function getMultiple(page = 1) {
   const offset = helper.getOffset(page, config.listPerPage);
-  const rows = await db.query(`SELECT * FROM employees`);
+  const rows = await db.query(`SELECT * FROM Employees`);
   const data = helper.emptyOrRows(rows);
   const meta = { page };
 
@@ -162,8 +162,9 @@ async function UpdateUserProfile(userProfile) {
   return { message };
 }
 
+
 async function UpdateUserProfilePhoto(userProfile) {
-  console.log("userProfile", userProfile);
+  console.log("userProfile",userProfile);
   const result = await db.query(
     `UPDATE Employees SET ProfileImage = '${userProfile.ProfileimgName}' WHERE EmployeeId = '${userProfile.userId}';`
   );

@@ -42,7 +42,6 @@ CREATE TABLE `ar_type_master` (
 
 CREATE TABLE `companyinformation` (
   `CompanyId` int(11) NOT NULL,
-    `Code` BINARY(16)  DEFAULT (UUID_TO_BIN(UUID())),
   `CompanyName` varchar(150) DEFAULT NULL,
   `Type` varchar(30) DEFAULT NULL,
   `Phone` varchar(30) DEFAULT NULL,
@@ -109,7 +108,7 @@ CREATE TABLE `employeeactionnotification` (
 
 CREATE TABLE `employeeattendance` (
   `AttendanceId` int(11) NOT NULL,
-  `CheckInDate` datetime NOT NULL DEFAULT current_timestamp(),
+  `CheckInDate` date NOT NULL DEFAULT current_timestamp(),
   `CheckInTime` time DEFAULT NULL,
   `CheckOutTime` time DEFAULT NULL,
   `EmployeeId` int(11) NOT NULL,
@@ -646,7 +645,7 @@ CREATE TABLE `holidaymaster` (
   `HolidaySaka` varchar(50) DEFAULT NULL,
   `HolidayComments` varchar(200) DEFAULT NULL,
   `CreatedBy` int(11) NOT NULL,
-  `CreatedAt` datetime NOT NULL DEFAULT current_timestamp(),
+  `CreatedAt` date NOT NULL DEFAULT current_timestamp(),
   `CommentsStatus` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -736,7 +735,10 @@ INSERT INTO `menurole` (`MenuRoleId`, `MenuId`, `RoleId`) VALUES
 (61, 78, 7),
 (62, 78, 1),
 (63, 91, 1),
-(64, 91, 7);
+(64, 91, 7),
+(65, 1, 1),
+(66, 92, 7),
+(67, 93, 7);
 
 -- --------------------------------------------------------
 
@@ -797,7 +799,9 @@ INSERT INTO `menus` (`MenuId`, `MenuText`, `ParentId`, `Route`, `Icon`) VALUES
 (88, 'AR Type', 6, 'ARTypeMaster', NULL),
 (89, 'Salary Invoice', 6, 'SalaryARInvoice', NULL),
 (90, 'Make Employee ID Card', 6, 'EmployeeIdCard', NULL),
-(91, 'Project Role', 1, 'ProjectRoleMaster', NULL);
+(91, 'Project Role', 1, 'ProjectRoleMaster', NULL),
+(92, 'Company', 6, 'Company', NULL),
+(93, 'Qualification', 6, 'Qualification', NULL);
 
 -- --------------------------------------------------------
 
@@ -921,7 +925,7 @@ CREATE TABLE `rolepermissions` (
 --
 
 INSERT INTO `rolepermissions` (`RolePermissionId`, `RoleId`, `PermissionId`) VALUES
-(46, 1, 30),
+(127, 1, 30),
 (47, 1, 31),
 (49, 1, 32),
 (50, 1, 33),
@@ -957,6 +961,7 @@ INSERT INTO `rolepermissions` (`RolePermissionId`, `RoleId`, `PermissionId`) VAL
 (102, 3, 11),
 (103, 3, 16),
 (119, 3, 52),
+(142, 3, 67),
 (2, 7, 1),
 (3, 7, 7),
 (4, 7, 8),
@@ -1020,14 +1025,21 @@ INSERT INTO `rolepermissions` (`RolePermissionId`, `RoleId`, `PermissionId`) VAL
 (105, 7, 71),
 (107, 7, 72),
 (114, 7, 74),
+(137, 7, 76),
 (120, 7, 77),
+(139, 7, 78),
+(136, 7, 79),
 (115, 7, 80),
 (95, 7, 81),
 (97, 7, 82),
 (92, 7, 83),
-(98, 7, 88);
-
--- --------------------------------------------------------
+(132, 7, 84),
+(124, 7, 85),
+(125, 7, 86),
+(126, 7, 87),
+(98, 7, 88),
+(130, 7, 90),
+(129, 7, 91);-- --------------------------------------------------------
 
 --
 -- Table structure for table `salarytemplatecomponents`
@@ -1553,9 +1565,9 @@ CREATE TABLE `view_template_component` (
 --
 -- Structure for view `view_template_component`
 --
--- DROP TABLE IF EXISTS `view_template_component`;
+DROP TABLE IF EXISTS `view_template_component`;
 
--- CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_template_component`  AS SELECT `t1`.`TemplateComponentId` AS `TemplateComponentId`, `t1`.`TemplateId` AS `TemplateId`, `t1`.`SalaryComponentId` AS `SalaryComponentId`, `t1`.`DependentOnComponentId` AS `DependentOnComponentId`, `t1`.`IsDependentOnCTC` AS `IsDependentOnCTC`, `t1`.`CalculationMethodId` AS `CalculationMethodId`, `t1`.`NumberOrAmount` AS `NumberOrAmount`, `t2`.`Code` AS `Code`, `t2`.`CalculationMethod` AS `CalculationMethod`, `t3`.`EarningOrDeductionName` AS `EarningOrDeductionName`, `t3`.`EarningOrDeductionType` AS `EarningOrDeductionType`, `t3`.`PreTaxORPostTax` AS `PreTaxORPostTax` FROM ((`salarytemplatecomponents` `t1` left join `staticcalculationmethods` `t2` on(`t1`.`CalculationMethodId` = `t2`.`CalculationMethodId`)) join `staticsalarycomponents` `t3` on(`t3`.`SalaryComponentsId` = `t1`.`SalaryComponentId`))  ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_template_component`  AS SELECT `t1`.`TemplateComponentId` AS `TemplateComponentId`, `t1`.`TemplateId` AS `TemplateId`, `t1`.`SalaryComponentId` AS `SalaryComponentId`, `t1`.`DependentOnComponentId` AS `DependentOnComponentId`, `t1`.`IsDependentOnCTC` AS `IsDependentOnCTC`, `t1`.`CalculationMethodId` AS `CalculationMethodId`, `t1`.`NumberOrAmount` AS `NumberOrAmount`, `t2`.`Code` AS `Code`, `t2`.`CalculationMethod` AS `CalculationMethod`, `t3`.`EarningOrDeductionName` AS `EarningOrDeductionName`, `t3`.`EarningOrDeductionType` AS `EarningOrDeductionType`, `t3`.`PreTaxORPostTax` AS `PreTaxORPostTax` FROM ((`salarytemplatecomponents` `t1` left join `staticcalculationmethods` `t2` on(`t1`.`CalculationMethodId` = `t2`.`CalculationMethodId`)) join `staticsalarycomponents` `t3` on(`t3`.`SalaryComponentsId` = `t1`.`SalaryComponentId`))  ;
 
 --
 -- Indexes for dumped tables
@@ -2578,7 +2590,6 @@ ALTER TABLE `taskcategorymaster` ADD FOREIGN KEY(`CompanyId`) REFERENCES `compan
 UPDATE `companyinformation` SET `Logo` = 'Static/WiseLogoFinal.png' WHERE `companyinformation`.`CompanyId` = 1;
 ALTER TABLE `timesheet` ADD `RoleId` INT NULL AFTER `EmployeeId`;
 ALTER TABLE `timesheet` ADD FOREIGN KEY(`RoleId`) REFERENCES `static_project_roles`(`ProjectRoleId`) ON DELETE RESTRICT ON UPDATE NO ACTION;
-SET SQL_SAFE_UPDATES = 0;
 UPDATE timesheet ts INNER JOIN project_team pt ON pt.EmployeeId=ts.EmployeeId AND pt.ProjectId=ts.ProjectId SET ts.RoleId=pt.ProjectRoleId;
 ALTER TABLE `static_project_roles` DROP INDEX `DisplayDescription`;
 ALTER TABLE `static_project_roles` ADD UNIQUE(`DisplayDescription`, `CompanyId`);
@@ -2589,3 +2600,20 @@ ALTER TABLE `staticroles` ADD `IsReserved` BOOLEAN NOT NULL DEFAULT FALSE AFTER 
 UPDATE `staticroles` SET `IsReserved` = '1' WHERE `staticroles`.`RoleId` = 7;
 ALTER TABLE `holidaymaster` ADD `CompanyId` INT NOT NULL DEFAULT '1';
 ALTER TABLE `holidaymaster` ADD FOREIGN KEY (`CompanyId`) REFERENCES `companyinformation`(`CompanyId`) ON DELETE CASCADE ON UPDATE NO ACTION;
+
+CREATE TABLE `static_qualification_master` (
+  `QualificationId` int(11) NOT NULL,
+  `DisplayQualification` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `static_qualification_master`
+  ADD PRIMARY KEY (`QualificationId`);
+
+ALTER TABLE `employees` ADD `QualificationsMasterId` INT NULL ;
+
+ALTER TABLE `employees` ADD FOREIGN KEY (`QualificationsMasterId`) REFERENCES `static_qualification_master`(`QualificationId`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+INSERT INTO `static_qualification_master` (`QualificationId`, `DisplayQualification`) VALUES
+(1, 'MCA'),
+(2, 'Msc'),
+(3, 'MBA');
