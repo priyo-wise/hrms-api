@@ -7,8 +7,8 @@ async function checkEmployee(register, step) {
   const users = await db.query(
     `Select EmployeeId,FullName,Email,FatherName,MotherName,PermanentAddress,
       CommunicationAddress,DOB,EmergencyPhone,Phone,Qualifications,
-      WorkLocation,staticstatus.StatusId,staticstatus.Status,Step from Employees 
-      join staticstatus on staticstatus.StatusId=Employees.StatusId
+      WorkLocation,staticstatus.StatusId,staticstatus.Status,Step from employees 
+      join staticstatus on staticstatus.StatusId=employees.StatusId
       where Email='${register.Email}'`
   );
   var msg = "";
@@ -89,7 +89,7 @@ async function create(register, EmployeeId, CompanyId = 0) {
   var query = "";
   var msg = "";
   if (EmployeeId != 0) {
-    query = `UPDATE Employees set FullName='${register.FullName}', Email='${register.Email}', FatherName='${register.FatherName}',
+    query = `UPDATE employees set FullName='${register.FullName}', Email='${register.Email}', FatherName='${register.FatherName}',
      MotherName='${register.MotherName}', Password='${register.Password}', PermanentAddress='${register.PermanentAddress}',
      CommunicationAddress='${register.CommunicationAddress}', DOB='${register.DOB}', EmergencyPhone='${register.EmergencyPhone}',
      Phone='${register.Phone}', Qualifications='${register.Qualifications}',StatusId=5,WorkLocation='${register.WorkLocation}'
@@ -109,14 +109,18 @@ async function create(register, EmployeeId, CompanyId = 0) {
   }
 
   if (query != "") {
-    await db.query(query).catch(err=>{throw err;});
-    msg = await checkEmployee(register, EmployeeId).catch(err=>{throw err;});
+    await db.query(query).catch((err) => {
+      throw err;
+    });
+    msg = await checkEmployee(register, EmployeeId).catch((err) => {
+      throw err;
+    });
   }
   return msg;
 }
 
 const fetchMail = async () => {
-  const rows = await db.query(`SELECT Email from Employees `);
+  const rows = await db.query(`SELECT Email from employees `);
   const data = helper.emptyOrRows(rows);
   return {
     data,
@@ -125,7 +129,7 @@ const fetchMail = async () => {
 
 const fetch = async () => {
   const rows = await db.query(
-    `SELECT * from Employees where StatusId = 5 and Step =1`
+    `SELECT * from employees where StatusId = 5 and Step =1`
   );
   const data = helper.emptyOrRows(rows);
   return {
@@ -134,12 +138,12 @@ const fetch = async () => {
 };
 
 const fetchByStatus = async (id) => {
-  const rows = await db.query(`SELECT * FROM Employees where StatusId = ${id}`);
+  const rows = await db.query(`SELECT * FROM employees where StatusId = ${id}`);
   return helper.emptyOrRows(rows);
 };
 const fetchById = async (id) => {
   const rows = await db.query(
-    `SELECT * FROM Employees where EmployeeId = ${id}`
+    `SELECT * FROM employees where EmployeeId = ${id}`
   );
   return helper.emptyOrRows(rows);
 };
@@ -161,7 +165,7 @@ const Upload = async (doc) => {
 
 const FetchEmp = async () => {
   const rows = await db.query(
-    `select * from Employees ORDER BY EmployeeId DESC LIMIT 1`
+    `select * from employees ORDER BY EmployeeId DESC LIMIT 1`
   );
   return helper.emptyOrRows(rows);
 };

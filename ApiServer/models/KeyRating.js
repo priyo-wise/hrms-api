@@ -3,12 +3,12 @@ const helper = require("../helper");
 const config = require("../config");
 
 const fetch = async () => {
-  const rows = await db.query(`SELECT * from staticKRA`);
+  const rows = await db.query(`SELECT * from statickra`);
   return helper.emptyOrRows(rows);
 };
 
 const fetchById = async (id) => {
-  const rows = await db.query(`SELECT * FROM staticKRA where KRAId = ${id}`);
+  const rows = await db.query(`SELECT * FROM statickra where KRAId = ${id}`);
   return helper.emptyOrRows(rows);
 };
 

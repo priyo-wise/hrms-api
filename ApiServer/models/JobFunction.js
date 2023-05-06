@@ -3,13 +3,13 @@ const helper = require("../helper");
 const config = require("../config");
 
 const fetch = async () => {
-  const rows = await db.query(`SELECT * from staticJobFunctions`);
+  const rows = await db.query(`SELECT * from stastaticjobfunctions`);
   return helper.emptyOrRows(rows);
 };
 
 const fetchById = async (id) => {
   const rows = await db.query(
-    `SELECT * FROM staticJobFunctions where JobFunctionId = ${id}`
+    `SELECT * FROM stastaticjobfunctions where JobFunctionId = ${id}`
   );
   return helper.emptyOrRows(rows);
 };

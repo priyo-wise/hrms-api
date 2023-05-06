@@ -2,19 +2,19 @@ const db = require("./db");
 const helper = require("../helper");
 const config = require("../config");
 const _ = require("underscore");
-const utility = require("./Utility")
+const utility = require("./Utility");
 //const { query } = require("express");
 
 const create = async (performance) => {
   if ((performance.PerformanceId || 0) == 0) {
     performance.PerformanceId = await utility.create(
       _.omit(performance, "details"),
-      "employeePerformance"
+      "employeeperformance"
     );
   } else {
     await utility.update(
       _.omit(performance, ["details"]),
-      "employeePerformance",
+      "employeeperformance",
       { PerformanceId: performance.PerformanceId }
     );
   }
@@ -41,19 +41,19 @@ const insertUpdatePerformanceDetail = async (item) => {
 
 const fetch = async () => {
   const rows = await db.query(
-    `SELECT t1.*, t2.FullName FROM employeePerformance t1 join employees t2 on t1.EmployeeId=t2.EmployeeId`
+    `SELECT t1.*, t2.FullName FROM employeeperformance t1 join employees t2 on t1.EmployeeId=t2.EmployeeId`
   );
   return helper.emptyOrRows(rows);
 };
 const fetchByUser = async (employeeId) => {
   const rows = await db.query(
-    `SELECT t1.*, t2.FullName FROM employeePerformance t1 join employees t2 on t1.EmployeeId=t2.EmployeeId where t1.EmployeeId = ${employeeId}`
+    `SELECT t1.*, t2.FullName FROM employeeperformance t1 join employees t2 on t1.EmployeeId=t2.EmployeeId where t1.EmployeeId = ${employeeId}`
   );
   return helper.emptyOrRows(rows);
 };
 const fetchById = async (id) => {
   const rows = await db.query(
-    `SELECT * FROM employeePerformance where PerformanceId = ${id}`
+    `SELECT * FROM employeeperformance where PerformanceId = ${id}`
   );
   return helper.emptyOrRows(rows);
 };

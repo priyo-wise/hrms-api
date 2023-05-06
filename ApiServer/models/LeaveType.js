@@ -4,7 +4,7 @@ const config = require("../config");
 
 async function getleaveType(leaveId) {
   const rows = await db.query(
-    `SELECT * FROM staticLeaveTypes where LeaveId=${leaveId}`
+    `SELECT * FROM staticleavetypes where LeaveId=${leaveId}`
   );
   const data = helper.emptyOrRows(rows);
   return {
@@ -12,30 +12,30 @@ async function getleaveType(leaveId) {
   };
 }
 const fetch = async (id) => {
-  var query = await db.query(`SELECT * from staticLeaveTypes`);
+  var query = await db.query(`SELECT * from staticleavetypes`);
   //var query = "";
   if (id == undefined) {
-    query = await db.query(`SELECT * from staticLeaveTypes`);
+    query = await db.query(`SELECT * from staticleavetypes`);
   } else {
     query = await db.query(
       `SELECT staticleavetypes.LeaveId, staticleavetypes.LeaveName FROM staticleavetypes INNER JOIN employeeleavetransactions on staticleavetypes.LeaveId=employeeleavetransactions.LeaveTypeId WHERE employeeleavetransactions.EmployeeId=${id} GROUP by staticleavetypes.LeaveId;`
     );
     if (query.length == 0) {
-      query = await db.query(`SELECT * from staticLeaveTypes where LeaveId=8`);
+      query = await db.query(`SELECT * from staticleavetypes where LeaveId=8`);
     }
   }
   return helper.emptyOrRows(query);
 };
 
 const fetchLeave = async (id) => {
-  var query = await db.query(`SELECT * from staticLeaveTypes`);
+  var query = await db.query(`SELECT * from staticleavetypes`);
 
   return helper.emptyOrRows(query);
 };
 
 const fetchById = async (id) => {
   const rows = await db.query(
-    `SELECT * FROM staticLeaveTypes where LeaveId = ${id}`
+    `SELECT * FROM staticleavetypes where LeaveId = ${id}`
   );
   return helper.emptyOrRows(rows);
 };

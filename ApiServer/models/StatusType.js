@@ -5,10 +5,10 @@ const config = require("../config");
 const create = async (StatusType) => {
   var query = "";
   if ((StatusType.StatusId || 0) == 0) {
-    query = `Insert Into staticStatus (StatusId, Status,StatusMeaning)
+    query = `Insert Into staticstatus (StatusId, Status,StatusMeaning)
    values ('${StatusType.StatusId}', '${StatusType.Status}', '${StatusType.StatusMeaning}')`;
   } else {
-    query = "update staticStatus set";
+    query = "update staticstatus set";
 
     query += ` Status='${StatusType.Status}'`;
     query += `, StatusMeaning='${StatusType.StatusMeaning}'`;
@@ -18,13 +18,13 @@ const create = async (StatusType) => {
 };
 
 const fetch = async () => {
-  const rows = await db.query(`SELECT * from staticStatus`);
+  const rows = await db.query(`SELECT * from staticstatus`);
   return helper.emptyOrRows(rows);
 };
 
 const fetchById = async (id) => {
   const rows = await db.query(
-    `SELECT * FROM staticStatus where StatusId = ${id}`
+    `SELECT * FROM staticstatus where StatusId = ${id}`
   );
   return helper.emptyOrRows(rows);
 };
@@ -32,7 +32,7 @@ const fetchById = async (id) => {
 const remove = async (StatusType) => {
   console.log(id);
   const rows = await db.query(
-    `delete from staticStatus  where StatusId = ${StatusType.StatusId}`
+    `delete from staticstatus  where StatusId = ${StatusType.StatusId}`
   );
   return helper.emptyOrRows(rows);
 };
