@@ -28,7 +28,7 @@ const getTimeSheetOverView = async (userId) => {
 
 const fetchByEmpId = async (id) => {
   const rows = await db.query(
-    `SELECT EmployeeId, ManagerScore, EmpSelfScore,FinalAgreedScore FROM employeePerformance where EmployeeId = ${id}`
+    `SELECT EmployeeId, ManagerScore, EmpSelfScore,FinalAgreedScore FROM employeeperformance where EmployeeId = ${id}`
   );
   const details = helper.emptyOrRows(rows);
 
@@ -55,12 +55,12 @@ const fetchEmpleave = async (id) => {
 const submit = async (id) => {
   var msg = "";
   const query = await db.query(
-    `select * from EmployeeAttendance where EmployeeId=${id}  && CheckInDate = CURRENT_DATE`
+    `select * from employeeattendance where EmployeeId=${id}  && CheckInDate = CURRENT_DATE`
   );
   var checked = query?.slice(-1)[0] ?? [];
   if (query.length == 0 || (query.length > 0 && checked.CheckOutTime != null)) {
     const rows = await db.query(
-      `Insert into EmployeeAttendance(CheckInDate,CheckInTime,EmployeeId,Status) values(CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,${id},1)`
+      `Insert into employeeattendance(CheckInDate,CheckInTime,EmployeeId,Status) values(CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,${id},1)`
     );
     msg = {
       Message: "Success",
@@ -68,7 +68,7 @@ const submit = async (id) => {
     return msg;
   } else {
     const rows = await db.query(
-      `update EmployeeAttendance set CheckOutTime = CURRENT_TIMESTAMP ,Status=2 where EmployeeId=${id} && AttendanceId =${checked.AttendanceId}`
+      `update employeeattendance set CheckOutTime = CURRENT_TIMESTAMP ,Status=2 where EmployeeId=${id} && AttendanceId =${checked.AttendanceId}`
     );
     return helper.emptyOrRows(rows);
   }
@@ -76,7 +76,7 @@ const submit = async (id) => {
 
 const fetchCheckIn = async (id) => {
   const rows = await db.query(
-    `select * from EmployeeAttendance where EmployeeId = ${id} && CheckInDate = CURRENT_DATE`
+    `select * from employeeattendance where EmployeeId = ${id} && CheckInDate = CURRENT_DATE`
   );
   return rows;
 };
@@ -98,9 +98,9 @@ const fetchEmpProject = async (id) => {
 
 const fetchProjectManager = async (id) => {
   const rows = await db.query(
-   // `SELECT projectteam.ProjectId,emp.FullName from UserRoles  join Employees emp on UserRoles.EmployeeId=emp.EmployeeId JOIN project_team projectteam on UserRoles.EmployeeId=projectteam.EmployeeId join StaticRoles role on UserRoles.RoleId=role.RoleId WHERE UserRoles.RoleId=2  GROUP by role.RoleId,projectteam.EmployeeId; `
-  `SELECT employees.FullName,projectmaster.ProjectId FROM project_team INNER JOIN employees on employees.EmployeeId=project_team.EmployeeId INNER JOIN projectmaster on projectmaster.ProjectId=project_team.ProjectId WHERE project_team.ProjectRoleId=1 GROUP by project_team.ProjectRoleId,project_team.EmployeeId; `
-    );
+    // `SELECT projectteam.ProjectId,emp.FullName from UserRoles  join Employees emp on UserRoles.EmployeeId=emp.EmployeeId JOIN project_team projectteam on UserRoles.EmployeeId=projectteam.EmployeeId join StaticRoles role on UserRoles.RoleId=role.RoleId WHERE UserRoles.RoleId=2  GROUP by role.RoleId,projectteam.EmployeeId; `
+    `SELECT employees.FullName,projectmaster.ProjectId FROM project_team INNER JOIN employees on employees.EmployeeId=project_team.EmployeeId INNER JOIN projectmaster on projectmaster.ProjectId=project_team.ProjectId WHERE project_team.ProjectRoleId=1 GROUP by project_team.ProjectRoleId,project_team.EmployeeId; `
+  );
   return helper.emptyOrRows(rows);
 };
 

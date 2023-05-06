@@ -9,7 +9,7 @@ const fetch = async (Employee) => {
 
   var roles = rows[0].RoleId;
   const data = await db.query(
-    `select * from EmployeeActionNotification where Status = 5`
+    `select * from employeeactionnotification where Status = 5`
   );
 
   return helper.emptyOrRows(data);
