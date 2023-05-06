@@ -77,7 +77,7 @@ const PerformanceComponent = () => {
       Value: "HRComments",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "PerformanceId",
       cssClass: "text-center td-width-100",
       isVisiable: permission.ManageEdit,
@@ -111,7 +111,15 @@ const PerformanceComponent = () => {
   const confirmMessage = MasterPageName + " Deleted successfully";
   
   return (
-    <>    
+    <>        
+    <Container
+        className="p-4"
+        style={{
+          "background-color": "#FFF",
+          "border-radius": "10px ",
+          margin: "10px",
+        }}
+      >
     <SnackbarComponent ref={refSnackbar} confirmMessage={confirmMessage} />
     <StaticListComponent
       columns={columns}
@@ -122,7 +130,14 @@ const PerformanceComponent = () => {
       IsAddButtonVisible={permission?.ManageAdd}
       isSearchRequired={true}
       allowSerialNo={true}
-    ></StaticListComponent>
+    ></StaticListComponent>     
+    <div className="row m-2  mb-4">
+       <div className="text-left mt-2">
+         <a className="btn btn-outline-primary p-2 col-2" href="/">Back</a>
+         
+       </div>
+     </div>
+    </Container>
     <AddEditPerformanceComponent
         callBackEvent={() => fetchPerformanceList()}
         ref={addEditModalRef}

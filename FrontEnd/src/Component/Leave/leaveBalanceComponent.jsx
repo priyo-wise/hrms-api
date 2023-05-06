@@ -93,7 +93,7 @@ const AllLeaveBalanceList = () => {
       Value: "NoOfLeaveDebited",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "leaveTransactionsId",
       cssClass: "text-center td-width-100",
       isVisiable: permission.ManageEdit,

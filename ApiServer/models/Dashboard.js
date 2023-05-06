@@ -98,8 +98,9 @@ const fetchEmpProject = async (id) => {
 
 const fetchProjectManager = async (id) => {
   const rows = await db.query(
-    `SELECT projectteam.ProjectId,emp.FullName from UserRoles  join Employees emp on UserRoles.EmployeeId=emp.EmployeeId JOIN project_team projectteam on UserRoles.EmployeeId=projectteam.EmployeeId join StaticRoles role on UserRoles.RoleId=role.RoleId WHERE UserRoles.RoleId=2  GROUP by role.RoleId,projectteam.EmployeeId; `
-  );
+   // `SELECT projectteam.ProjectId,emp.FullName from UserRoles  join Employees emp on UserRoles.EmployeeId=emp.EmployeeId JOIN project_team projectteam on UserRoles.EmployeeId=projectteam.EmployeeId join StaticRoles role on UserRoles.RoleId=role.RoleId WHERE UserRoles.RoleId=2  GROUP by role.RoleId,projectteam.EmployeeId; `
+  `SELECT employees.FullName,projectmaster.ProjectId FROM project_team INNER JOIN employees on employees.EmployeeId=project_team.EmployeeId INNER JOIN projectmaster on projectmaster.ProjectId=project_team.ProjectId WHERE project_team.ProjectRoleId=1 GROUP by project_team.ProjectRoleId,project_team.EmployeeId; `
+    );
   return helper.emptyOrRows(rows);
 };
 

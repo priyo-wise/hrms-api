@@ -119,7 +119,7 @@ const RegistrationApproval = () => {
       Value: "Phone",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       //isVisiable: permission.ManageEdit || permission.ManageDelete,
       render: (dr) => (
         <>

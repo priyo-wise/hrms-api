@@ -11,6 +11,7 @@ const fetch = async (id) => {
 
 const employeeFamilyDetailsFetchById = async (id) => {
   const rows = await db.query( `SELECT * from EmployeeFamily where EmployeeId=${id}` );
+  
   return helper.emptyOrRows(rows);
 };
 const fetchById = async (id) => {

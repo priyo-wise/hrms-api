@@ -52,11 +52,11 @@ const StatusType = () => {
       Value: "Status",
     },
     {
-      Text: "StatusMeaning",
+      Text: "Status Meaning",
       Value: "StatusMeaning",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "StatusId",
       cssClass: "text-center td-width-100",
       isVisiable: permission.ManageEdit || permission.ManageDelete,

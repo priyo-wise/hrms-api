@@ -80,7 +80,7 @@ const AddEditProjectRoleMaster = (prop, ref) => {
           <div className="row">
             <div className="col-md-12">
               <FormInputText
-                label="Project Role Text"
+                label="Project Role"
                 name="DisplayDescription"
                 type="text"
                 isRequired="true"

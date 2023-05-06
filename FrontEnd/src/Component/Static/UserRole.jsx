@@ -57,7 +57,7 @@ const UserRole = () => {
       Value: "FullName",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "UserRoleId",
       style:{width:"60px",textAlign:"center", padding:"0px"},
       isVisiable: permission.ManageDelete,

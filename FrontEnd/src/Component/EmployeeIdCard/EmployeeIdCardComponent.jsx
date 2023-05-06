@@ -14,6 +14,7 @@ import _ from "underscore";
 import TableComponent from "../../Services/TableComponent";
 import { ActionPermission, PageInfo } from "../PageInfo";
 import format from "date-fns/format";
+import "./dateCss.css";
 import {
   Alert,
   Avatar,
@@ -77,7 +78,6 @@ const EmployeeIdCardReport = () => {
     });    
     if ((data?.DOB || "") !== "")
       data.DOB = format(new Date(data.DOB), "yyyy-MM-dd");
-    console.log("IdCardDetails",data.IdCardDetails);
     setIdCardInfo(data.IdCardDetails);
   };
 
@@ -111,7 +111,7 @@ const EmployeeIdCardReport = () => {
     renderAfterCalled.current = true;
   }, []);
 
-  const requiredMessage = "field is a required";
+  const requiredMessage = "This is a required field";
   const schema = yup
     .object()
     .shape({
@@ -163,9 +163,8 @@ const EmployeeIdCardReport = () => {
     <>
       {data === null && (
         <div>
-          <h3>Create Employee ID Card</h3>
-          <Card className="mt-1 border border-danger" style={{ width: "100%" }}>
-            <Card.Body>
+          <h3 class="px-4">Create Employee ID Card</h3>
+        <div style={{ backgroundColor: "#1976D2" }} className="pt-4 px-4">   
               <Form
                 defaultValues={filter}
                 onSubmit={onSubmit}
@@ -177,6 +176,7 @@ const EmployeeIdCardReport = () => {
                       name="EmployeeId"
                       ddOpt={persons ?? []}
                       label="Employee"
+                      labelCss="text-light"
                     />
                   </Col>
                   <Col md={4}>
@@ -184,23 +184,24 @@ const EmployeeIdCardReport = () => {
                       name="ExpireDate"
                       type="date"
                       label="Expire Date"
+                      labelCss="text-light"
+                      min={new Date().toISOString().split("T")[0]}
+                      max="2999-12-31"  
                     />
-                  </Col>
-                </Row>
-                <Row className="mt-2">
-                  <Col>
+                  </Col>                  
+                  <Col md={4}>
                     <Button
                       id="btnCreateIDCard"
-                      variant="outline-primary"
+                      variant="outline-light"
                       type="submit"
+                      className="float-end"
                     >
                       Create ID Card
                     </Button>
                   </Col>
                 </Row>
               </Form>
-            </Card.Body>
-          </Card>
+              </div>
         </div>
       )}
       {IdCardinfo !== null && (
@@ -259,7 +260,8 @@ const EmployeeIdCardReport = () => {
                   <div className="card-body">  
                                   
                       <div className="row">
-                        <div className="col-sm-3 text-secondary"><img src="WiseLogoFinal.png" height="25" width="auto" />
+                        <div className="col-sm-3 text-secondary">                          
+                          <img src="WiseLogoFinal.png" height="25" width="auto" />
                         <div className="col-sm-9"></div>
                       </div>
                       </div>  
@@ -301,14 +303,10 @@ const EmployeeIdCardReport = () => {
                       <div className="card">
                   <div className="card-body">
                     <div className="d-flex flex-column align-items-center text-center">
-                      <div className="pic-holder">
                         <img
                           id="profilePic"
-                          className="pic rounded-circle p-1 bg-primary"
-                          src={`${StandardConst.uploadImages}${dp}`}
+                          src={`${StandardConst.apiBaseUrl}/uploads/${user.ProfileImage ?? "" }`}
                         />
-
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -331,7 +329,7 @@ const EmployeeIdCardReport = () => {
           
             <div className="row">
                       <div className="col-sm-9"></div>
-                      <div className="col-sm-3 text-secondary">
+                      <div className="col-sm-3 text-secondary text-end">
                       <button className="btn btn-primary px-4" type="button" onClick={Print} > Print</button>
                       </div>
                     </div>

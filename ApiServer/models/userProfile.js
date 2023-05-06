@@ -13,6 +13,14 @@ async function CreateEmployeeManager(
   let message = "Error in Manager Mapping";
   var result2,
     resultReject = "";
+  const getEmployeeNotification = await db.query(
+    `select * from employeeactionnotification where EmployeeId=${EmployeeId} and Status=5`
+  );
+  if (getEmployeeNotification.length >= 1) {
+    await db.query(
+      `UPDATE employeeactionnotification SET Status = ${Status} WHERE EmployeeId = ${EmployeeId}`
+    );
+  }
   const rows = await db.query(
     `select * from employeedocuments where EmployeeId=${EmployeeId} and StatusId=5`
   );
@@ -154,6 +162,20 @@ async function UpdateUserProfile(userProfile) {
   return { message };
 }
 
+async function UpdateUserProfilePhoto(userProfile) {
+  console.log("userProfile", userProfile);
+  const result = await db.query(
+    `UPDATE Employees SET ProfileImage = '${userProfile.ProfileimgName}' WHERE EmployeeId = '${userProfile.userId}';`
+  );
+  let message = "Error in updating User Profile";
+
+  if (result.affectedRows) {
+    message = "User Profile updated successfully";
+  }
+
+  return { message };
+}
+
 async function FetchDocType(DocumentId) {
   const rows = await db.query(
     `SELECT t1.EmployeeId, t2.DocumentType,t3.Status from employeedocuments t1 join staticdocumenttypes t2 on t1.DocumentTypeId = t2.DocumentTypeId join staticstatus t3 on t1.StatusId=t3.StatusId WHERE DocumentId =${DocumentId}`
@@ -176,4 +198,5 @@ module.exports = {
   Fetchlocation,
   CreateEmployeeOfficelocation,
   FetchDocType,
+  UpdateUserProfilePhoto,
 };

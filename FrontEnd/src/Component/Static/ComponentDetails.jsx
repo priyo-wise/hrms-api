@@ -71,7 +71,7 @@ const ComponentDetails = () => {
       Value: "Sequence",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "ComponentDetailsId",
       cssClass: "text-center td-width-100",
       isVisiable: permission.ManageDelete,

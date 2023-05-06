@@ -57,7 +57,7 @@ const KeyRating = () => {
       cssClass: "text-left td-width-4",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "KRAId",
       cssClass: "text-center td-width-80",
       isVisiable: permission.ManageEdit || permission.ManageDelete,

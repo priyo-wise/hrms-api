@@ -49,7 +49,7 @@ const Task = () => {
       Value: "TaskCategoryName",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "TaskCategoryId",
       cssClass: "text-center td-width-100",
       //isVisiable: permission.ManageEdit || permission.ManageDelete,

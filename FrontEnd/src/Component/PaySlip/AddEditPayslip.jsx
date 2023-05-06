@@ -355,7 +355,7 @@ const AddEditPayslip = (prop, ref) => {
                       setPayslipData({ ...payslipData, FromDate: v })
                     }
                     max={
-                      (payslipData?.ToDate ?? "") == ""
+                      (payslipData?.ToDate ?? "") == "2999-12-31"
                         ? undefined
                         : payslipData.ToDate
                     }
@@ -366,7 +366,7 @@ const AddEditPayslip = (prop, ref) => {
                             .startOf("month")
                             .toFormat("yyyy-MM-dd")
                     }
-                    pattern="[0-9]{4}"
+                    pattern="[0-8]{4}"
                   />
                 </div>
                 <div className="col-md-6">

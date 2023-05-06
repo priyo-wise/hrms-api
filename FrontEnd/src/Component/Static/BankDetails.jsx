@@ -78,7 +78,7 @@ const BankDetails = () => {
     },
     {
       Searchable: false,
-      Text: "ACTION",
+      Text: "Action",
       key: "FinanceId",
       cssClass: "text-center td-width-100",
       //isVisiable: permission.ManageEdit || permission.ManageDelete,

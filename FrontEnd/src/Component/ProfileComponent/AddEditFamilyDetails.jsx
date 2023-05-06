@@ -38,7 +38,7 @@ const AddEditFamilyDetails = (prop, ref) => {
     },
   }));
   const handleClose = () => setShow(false);
-  const requiredMessage = "Field is a required";
+  const requiredMessage = "This is a required field";
   const schema = yup
     .object()
     .shape({

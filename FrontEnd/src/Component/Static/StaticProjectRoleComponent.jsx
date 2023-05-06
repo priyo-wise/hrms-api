@@ -61,7 +61,7 @@ const ProjectRoleMaster = () => {
   }, []);
   const columns = [
     {
-      Text: "Project Role Text",
+      Text: "Project Role",
       Value: "DisplayDescription",
     },
     {
@@ -70,7 +70,7 @@ const ProjectRoleMaster = () => {
     },
     {
       Searchable: false,
-      Text: "ACTION",
+      Text: "Action",
       cssClass: "text-center td-width-100",
      // isVisiable: permission.ManageEdit || permission.ManageDelete,
      // Template: (

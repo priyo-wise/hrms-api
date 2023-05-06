@@ -17,7 +17,6 @@ router.get("/Fetch", middleware.authorize, async (req, res, next) => {
 
 router.post("/Create", async function (req, res) {
   try {
-    console.log(req.body);
     await statcModel.create(req.body, "EmployeeActionNotification");
     res.json(null);
   } catch (err) {

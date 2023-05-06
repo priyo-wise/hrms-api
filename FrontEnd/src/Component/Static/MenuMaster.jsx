@@ -67,7 +67,7 @@ const MenuMaster = () => {
     },
     {
       Searchable: false,
-      Text: "ACTION",
+      Text: "Action",
       key: "MenuId",
       cssClass: "text-center td-width-100",
       isVisiable: permission.ManageEdit || permission.ManageDelete,

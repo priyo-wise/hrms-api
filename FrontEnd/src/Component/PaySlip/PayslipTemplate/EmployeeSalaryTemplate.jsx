@@ -66,7 +66,7 @@ const EmployeeSalaryTemplate = () => {
       DateFormat: "yyyy-MM-dd",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "SalaryTemplateId",
       Template: (
         <>

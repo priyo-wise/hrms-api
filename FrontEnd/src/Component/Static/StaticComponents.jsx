@@ -59,7 +59,7 @@ const StaticComponents = () => {
       Value: "ComponentDescription",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "ComponentId",
       cssClass: "text-center td-width-100",
       isVisiable: permission.ManageDelete,

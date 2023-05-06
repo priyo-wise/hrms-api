@@ -57,7 +57,7 @@ const RolePermission = () => {
       Value: "Permission",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       cssClass: "text-center td-width-100",
       isVisiable: permission.ManageDelete,
       render: (dr)=>(

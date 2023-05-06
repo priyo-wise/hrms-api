@@ -73,7 +73,7 @@ const TaxMaster = () => {
       Value: "DeductionType",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "TaxId",
       cssClass: "text-center td-width-100",
       isVisiable: permission.ManageEdit || permission.ManageDelete,

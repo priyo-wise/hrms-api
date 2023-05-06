@@ -52,7 +52,6 @@ const AddEditleave = (prop, ref) => {
         new Date(data.ApplyLeave.LeaveFromDate).getTime(); //Future date - current date
       var dayscount = Math.floor(msDiff / (1000 * 60 * 60 * 24));
       setData(data);
-      console.log("user check", data);
 
       setEmployeeId(data?.EmployeeData[0]?.EmployeeId);
       setEmployeePhone(data?.EmployeeData[0]?.EmergencyPhone);
@@ -66,6 +65,8 @@ const AddEditleave = (prop, ref) => {
   const schema = yup
     .object()
     .shape({
+      LeaveFromDate: yup.string().trim().required(requiredMessage),
+      LeaveToDate: yup.string().trim().required(requiredMessage),
       Remarks: yup.string().trim().required(requiredMessage),
       Phone: yup
         .number()
@@ -190,7 +191,7 @@ const AddEditleave = (prop, ref) => {
           <div className="row mt-1">
             <FormInputText
               name="Remarks"
-              label="Reason for leave"
+              label="Reason for Leave"
               as="textarea"
               isRequired="true"
             />

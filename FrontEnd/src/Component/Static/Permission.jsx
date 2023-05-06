@@ -55,7 +55,7 @@ const Permission = () => {
       cssClass: "text-center",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "PermissionId",
       cssClass: "text-center td-width-100",
       isVisiable: permission.ManageEdit || permission.ManageDelete,

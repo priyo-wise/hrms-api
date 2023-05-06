@@ -95,7 +95,7 @@ const Project = () => {
             Value: "BudgetTotalHour",
           },
           {
-            Text: "ACTION",
+            Text: "Action",
             key: "ProjectId",
             style: { width: "135px" },
             isVisiable: permission.ManageEdit || permission.ManageDelete,

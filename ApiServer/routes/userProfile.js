@@ -47,6 +47,7 @@ router.get(
   middleware.authorize,
   async function (req, res, next) {
     try {
+      
       if (req.params.EmployeeId == 0)
         res.json(await userProfile.getUserProfile(req.session.EmployeeId));
       else res.json(await userProfile.getUserProfile(req.params.EmployeeId));
@@ -131,9 +132,20 @@ router.post("/Create", middleware.authorize, async function (req, res, next) {
   }
 });
 
-router.post("/Update", middleware.authorize, async function (req, res, next) {
+router.post("/Update", async function (req, res, next) {
   try {
     res.json(await userProfile.UpdateUserProfile(req.body));
+  } catch (err) {
+    console.error(`Error while creating user`, err.message);
+    next(err);
+  }
+});
+
+
+router.post("/UpdateProfile", async function (req, res, next) {
+  console.log("user Profile img",req.body);
+  try {
+    res.json(await userProfile.UpdateUserProfilePhoto(req.body));
   } catch (err) {
     console.error(`Error while creating user`, err.message);
     next(err);

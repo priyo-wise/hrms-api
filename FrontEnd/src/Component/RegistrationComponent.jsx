@@ -14,6 +14,10 @@ import * as yup from "yup";
 import { format } from "date-fns";
 import FooterComponent from "./Layout/FooterComponent";
 import { WebService } from "../Services/WebService";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import SnackbarComponent from "../Services/SnackbarComponent";
+import DeleteConfirmAlert from "../Services/AlertComponent";
 import {
   Dialog,
   DialogActions,
@@ -62,6 +66,8 @@ const steps = [
 ];
 
 export default function Register() {
+  const ref = useRef();
+  const refSnackbar = useRef();
   const CompanyInfo = useSelector((s) => s.auth.CompanyInfo ?? {});
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -73,7 +79,8 @@ export default function Register() {
   const [employeeDocuments, setEmployeeDocuments] = useState([]);
   const [EmployeeId, setEmployeeId] = useState(0);
   const [showFinalSubmit, setShowFinalSubmit] = useState(0);
-
+  const [passwordValues, setPasswordValues] = useState({ password: "", showPassword: false,});
+  const [confirmpasswordValues, setConfirmPasswordValues] = useState({ password: "", showPassword: false,});
   const QualificationsData = [
     { text: "MCA", value: "MCA" },
     { text: "MA", value: "MA" },
@@ -83,6 +90,31 @@ export default function Register() {
     { text: "Work From Home", value: "Work From Home" },
     { text: "Work From Office", value: "Work From Office" },
   ];
+  const [nametxt, setFullName] = useState('');
+  const [fatherNametxt, setFatherName] = useState('');
+  const [motherNmetxt, setMotherName] = useState('');
+ 
+  const re = /^[A-Z a-z]+$/;
+  const onNameInputChange = e => {
+    const { value } = e.target;
+    
+    if (value === "" || re.test(value)) {
+      setFullName(value);
+    }
+  }
+  const onMnameInputChange = e => {
+    const { value } = e.target;
+    if (value === "" || re.test(value)) {
+      setMotherName(value);
+    }
+  }
+  const onFnameInputChange = e => {
+    const { value } = e.target;
+    
+    if (value === "" || re.test(value)) {
+      setFatherName(value);
+    }
+  }
   const schemaStep1 = yup
     .object()
     .shape({
@@ -93,9 +125,18 @@ export default function Register() {
   const schema = yup
     .object()
     .shape({
-      FullName: yup.string().trim().required(requiredMessage),
-      FatherName: yup.string().trim().required(requiredMessage),
-      MotherName: yup.string().trim().required(requiredMessage),
+      FullName:yup.string()
+      .required(requiredMessage)
+      .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
+      MotherName:yup.string()
+      .required(requiredMessage)
+      .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
+      FatherName:yup.string()
+      .required(requiredMessage)
+      .matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
+     // FullName: yup.string().trim().required(requiredMessage),
+      //MotherName: yup.string().trim().required(requiredMessage),
+     // FatherName: yup.string().trim().required(requiredMessage),
       DOB: yup.date().typeError(requiredMessage).required(requiredMessage),
       Phone: yup
         .number()
@@ -126,8 +167,32 @@ export default function Register() {
       WorkLocation: yup.string().trim().required(requiredMessage),
     })
     .required();
-
-  const handleSweetAlert = (Message, Title) => {
+   
+    const handleClickShowPassword = () => {
+      setPasswordValues({ ...passwordValues, showPassword: !passwordValues.showPassword });
+    };
+    
+    const handleMouseDownPassword = (event) => {
+      event.preventDefault();
+    };
+    
+    const handlePasswordChange = (prop) => (event) => {
+      setPasswordValues({ ...passwordValues, [prop]: event.target.value });
+    };
+  
+    const handleClickShowConfirmPassword = () => {
+      setConfirmPasswordValues({ ...confirmpasswordValues, showPassword: !confirmpasswordValues.showPassword });
+    };
+    
+    const handleMouseDownConfirmPassword = (event) => {
+      event.preventDefault();
+    };
+    
+    const handleConfirmPasswordChange = (prop) => (event) => {
+      setConfirmPasswordValues({ ...confirmpasswordValues, [prop]: event.target.value });
+    };
+  
+    const handleSweetAlert = (Message, Title) => {
     Swal.fire({
       title: Title.charAt(0).toUpperCase() + Title.slice(1),
       html: Message,
@@ -153,6 +218,7 @@ export default function Register() {
       endPoint: `DocumentType/DocumentDetails/${EmployeeId}`,
       dispatch,
     });
+    console.log("DOcument",data);
     setEmployeeDocuments(data);
     if (data?.length > 0) {
       setShowFinalSubmit("d-flex float-end");
@@ -211,7 +277,9 @@ export default function Register() {
           " Registered On " +
           info[0].TimeStamp +
           " Waiting for approval ";
-        Notification.Route = "RegistrationApproval";
+        Notification.Route = "RegistrationApproval";        
+        Notification.Status = 5;      
+        Notification.EmployeeId = EmployeeId;
         Notification.RoleId = 7;
         console.log(Notification);
         const notification = await WebService({
@@ -227,8 +295,27 @@ export default function Register() {
       console.log(error);
     }
   };
-
+      // onClick={async () => {
+                              //   await WebService({
+                              //     dispatch,
+                              //     endPoint: `User/Document/${data.DocumentId}`,
+                              //     method: "DELETE",
+                              //   });
+                              //   await getDocuments();
+                              // }}                       
+  const onDelete = async (DocumentId) => {
+    await WebService({
+      dispatch,
+      endPoint: `User/Document/${DocumentId}`,
+      method: "DELETE",
+    });
+    refSnackbar.current.setOpenSnackBar();
+    await getDocuments();
+  };
   const onSubmit = async (data) => {
+    console.log("data",data);
+    if ((data?.DOB || "") !== "")
+    data.DOB = format(new Date(data.DOB), "yyyy-MM-dd");
     setRegisterData(data);
     handleNext();
   };
@@ -431,12 +518,20 @@ export default function Register() {
                   <FormInputText
                     label="Full Name"
                     name="FullName"
-                    type="text"
+                    maxLength={40}
+                    type="text"                    
+                   // value={nametxt}
+                    //onChange={onNameInputChange}
                   />
                 </div>
 
                 <div className="col-md-6">
-                  <FormInputText label="Date of birth" name="DOB" type="date" />
+                  <FormInputText 
+                  label="Date of birth"
+                   name="DOB" 
+                  // max="2999-12-31"                    
+                   max={new Date().toISOString().split("T")[0]}
+                   type="date" />
                 </div>
               </div>
               <div className="row">
@@ -444,7 +539,10 @@ export default function Register() {
                   <FormInputText
                     label="Mother's Name"
                     name="MotherName"
+                    maxLength={40}
                     type="text"
+                   // value={motherNmetxt}
+                    //onChange={onMnameInputChange}
                   />
                 </div>
                 <div className="col-md-6">
@@ -463,6 +561,9 @@ export default function Register() {
                     label="Father's Name"
                     name="FatherName"
                     type="text"
+                    maxLength={40}
+                   // value={fatherNametxt}
+                    //onChange={onFnameInputChange}
                   />
                 </div>
                 <div className="col-md-6">
@@ -523,20 +624,41 @@ export default function Register() {
                     />
                   </div>
                 </div>
+
                 <div className="row">
                   <div className="col-md-6">
                     <FormInputText
                       label="Password"
                       name="Password"
-                      type="password"
+                     // type="password"
+                      type={passwordValues.showPassword ? "text" : "password"}
+                      //onChange={handlePasswordChange("password")}
+                      //value={passwordValues.password}                                                                  
                     />
+                     <IconButton
+              onClick={handleClickShowPassword}
+              onMouseDown={handleMouseDownPassword}
+            >
+              {passwordValues.showPassword ? <Visibility /> : <VisibilityOff />}
+            </IconButton>
+                    
                   </div>
                   <div className="col-md-6">
                     <FormInputText
                       label="Confirm Password"
                       name="ConfirmPassword"
-                      type="password"
-                    />
+                     // type="password"
+                      type={confirmpasswordValues.showPassword ? "text" : "password"}
+                      //onChange={handleConfirmPasswordChange("password")}
+                     // value={confirmpasswordValues.password}    
+                    /> 
+                    <IconButton
+                    onClick={handleClickShowConfirmPassword}
+                    onMouseDown={handleMouseDownConfirmPassword}
+                    position="end"
+                  >
+                    {confirmpasswordValues.showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
                   </div>
                 </div>
                 <div className="row">
@@ -613,7 +735,7 @@ export default function Register() {
                             type="text"
                           />
                         </div>
-                        <div className="col-md-6">
+                        <div className="col-md-6 text-end">
                           <Button id="button-addon2" type="submit">
                             Upload
                           </Button>
@@ -635,20 +757,20 @@ export default function Register() {
                             <IconButton
                               edge="end"
                               aria-label="delete"
-                              onClick={async () => {
-                                await WebService({
-                                  dispatch,
-                                  endPoint: `User/Document/${data.DocumentId}`,
-                                  method: "DELETE",
-                                });
-                                await getDocuments();
-                              }}
+                              onClick={(e) =>
+                                ref.current.confirmAlert(
+                                  "Delete", //Confirm button text
+                                  "Are You Sure", // Text if Alert
+                                  "Do you want to delete this document ", // Message of Alert
+                                  data.DocumentId // Endpoint to hit for delete
+                                )
+                              }
                             >
                               <DeleteIcon />
                             </IconButton>
                           </>
                         );
-                        return (
+                        return (                          
                           <ListItem
                             secondaryAction={deleteAction}
                             primaryAction={deleteAction}
@@ -659,13 +781,15 @@ export default function Register() {
                               </Avatar>
                             </ListItemAvatar>
                             <ListItemText primary={data.DocumentType} />
-                            <ListItemText primary={data.Number} />
+                            <ListItemText className="text-align:left" primary={data.Number} />
                           </ListItem>
                         );
                       })}
                     </List>
                   </Demo>
                 </Grid>
+                <SnackbarComponent ref={refSnackbar} confirmMessage="Document Deleted successfully" />
+                <DeleteConfirmAlert ref={ref} confirmEvent={(v) => onDelete(v)} />
               </div>
             </Form>
             <div className="row">
@@ -673,7 +797,7 @@ export default function Register() {
                 <Alert severity="success" className={showFinalSubmit}>
                   Click on
                   <strong className="mx-1">Submit Button</strong>
-                  to complete your reguatration @ Wise Software
+                  to complete your registration @ Wise Software
                 </Alert>
               </div>
 

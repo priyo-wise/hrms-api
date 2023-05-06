@@ -51,7 +51,7 @@ const ARTypeMasterList = () => {
       Value: "DisplayDescription",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "ARTypeId",
       cssClass: "text-center td-width-100",
      // isVisiable: permission.ManageEdit,

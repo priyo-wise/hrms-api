@@ -21,6 +21,7 @@ import InputBase from "@mui/material/InputBase";
 import { styled, alpha } from "@mui/material/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import Diversity3Icon from "@mui/icons-material/Diversity3";
+import { StandardConst } from "../../Services/StandardConst";
 import {
   AlertTitle,
   Avatar,
@@ -198,7 +199,7 @@ const DashboardComponent = () => {
           <div className="mb-npx">
             <div className="row align-items-center p-0">
               <div className="col-sm-6 col-12 mb-4 mb-sm-0">
-                <h1 className="h2 mb-0 ls-tight">Dashboard</h1>
+                <h3 className="ms-4 mt-2">Dashboard</h3>
               </div>
 
               <div className="col-sm-6 col-12 text-sm-end">
@@ -274,9 +275,7 @@ const DashboardComponent = () => {
                                   >
                                     Manager:
                                   </Typography>
-                                  {ProjectManager.length == 0
-                                    ? "No Manager Assigned yet"
-                                    : ProjectManager.map((managerData) => {
+                                  {ProjectManager.map((managerData) => {
                                         return (
                                           <span>
                                             {" "}
@@ -681,12 +680,18 @@ const TeamDashboard = () => {
                   <div className="card-body">
                     <div className="d-flex justify-content-between align-items-center">
                       <div className="d-flex align-items-center">
-                        <img
+                          <img
+                            className="rounded-circle"
+                            src={`${StandardConst.apiBaseUrl}/uploads/${item.ProfileImage ?? "" }`}
+                            style={{ width: "45px", height: "45px" }}
+                            alt=""
+                          />
+                        {/* <img
                           src="https://mdbootstrap.com/img/new/avatars/8.jpg"
                           alt=""
                           style={{ width: "45px", height: "45px" }}
                           className="rounded-circle"
-                        />
+                        /> */}
                         <div className="ms-3">
                           <p className="fw-bold mb-1"> {item.FullName}</p>
                           {(item.Roles ?? []).length > 0 && (

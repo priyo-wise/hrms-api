@@ -62,7 +62,7 @@ const MenuRole = () => {
       Value: "MenuText",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "MenuRoleId",
       cssClass: "text-center td-width-100",
       isVisiable: permission.ManageDelete,

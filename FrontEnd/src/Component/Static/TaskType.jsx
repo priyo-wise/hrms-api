@@ -54,7 +54,7 @@ const TaskType = () => {
       Value: "DisplayDescription",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "TaskTypeId",
       cssClass: "text-center td-width-100",
       //isVisiable: permission.ManageEdit || permission.ManageDelete,

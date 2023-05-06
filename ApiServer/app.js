@@ -114,7 +114,7 @@ app.use("/Applyleave", applyleave);
 // app.post("/add-employee", (request, response) => {
 //   console.log("req", request.body, "Res", response);
 // });
-app.use("/UserProfile", userProfileRouter);
+//app.use("/UserProfile", userProfileRouter);
 app.use("/Dashboard", dashboardRouter);
 app.use("/registration", userRegistrationRouter);
 app.use("/auth", authentication);

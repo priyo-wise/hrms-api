@@ -14,7 +14,7 @@ import StaticListComponent from "../../Services/StaticListComponent";
 const DocumentType = () => {
   const ref = useRef();
   const refSnackbar = useRef();
-  PageInfo({ pageTitle: "Document Type" });
+  PageInfo({ pageTitle: "Document" });
   const dispatch = useDispatch();
   const [records, setRecords] = useState([]);
   const [permission] = useState({
@@ -59,7 +59,7 @@ const DocumentType = () => {
       Value: "Mandatory",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "DocumentTypeId",
       cssClass: "text-center td-width-100",
       isVisiable: permission.ManageEdit || permission.ManageDelete,

@@ -14,6 +14,7 @@ import DeleteConfirmAlert from "../../Services/AlertComponent";
 import "../Static/Static.css";
 import ActionButton from "../../Services/ActionButton";
 import StaticListComponent from "../../Services/StaticListComponent";
+import Button from "react-bootstrap/Button";
 
 const empid = 0;
 const AllApplyLeaveList = () => {
@@ -131,7 +132,7 @@ const AllApplyLeaveList = () => {
       Value: "LeaveToDate",
     },
     {
-      Text: "leave Type",
+      Text: "Leave Type",
       Value: "LeaveName",
     },
     {
@@ -143,7 +144,7 @@ const AllApplyLeaveList = () => {
       Value: "Status",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "LeavesId",
       isVisiable: permission.ManageEdit,
       cssClass: "text-center td-width-100",
@@ -173,7 +174,7 @@ const AllApplyLeaveList = () => {
       ),
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "LeavesId",
       isVisiable: permission.ManageAprroveReject,
       cssClass: "text-center td-width-100",
@@ -218,7 +219,7 @@ const AllApplyLeaveList = () => {
         <div>
           <div class="row align-items-center p-0">
             <div class="col-sm-4 col-12 mb-2 mb-sm-0">
-              <h1 class="h2 mb-0 ls-tight">Leave Balance :</h1>
+              <h3 className="px-2 ms-4 mt-2">Leave Balance :</h3>
             </div>
 
             <div class="col-sm-6 col-12">
@@ -249,7 +250,13 @@ const AllApplyLeaveList = () => {
       IsAddButtonVisible={permission?.ManageAdd}
       isSearchRequired={true}
       allowSerialNo={true}
-    ></StaticListComponent>  
+    ></StaticListComponent>      
+         <div className="row m-2  mb-4">
+            <div className="text-left mt-2">
+              <a className="btn btn-outline-primary p-2 col-2" href="/">Back</a>
+              
+            </div>
+          </div>
       </Container>
   
       <AddEditLeave

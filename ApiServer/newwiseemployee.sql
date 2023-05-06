@@ -42,6 +42,7 @@ CREATE TABLE `ar_type_master` (
 
 CREATE TABLE `companyinformation` (
   `CompanyId` int(11) NOT NULL,
+    `Code` BINARY(16)  DEFAULT (UUID_TO_BIN(UUID())),
   `CompanyName` varchar(150) DEFAULT NULL,
   `Type` varchar(30) DEFAULT NULL,
   `Phone` varchar(30) DEFAULT NULL,
@@ -108,7 +109,7 @@ CREATE TABLE `employeeactionnotification` (
 
 CREATE TABLE `employeeattendance` (
   `AttendanceId` int(11) NOT NULL,
-  `CheckInDate` date NOT NULL DEFAULT current_timestamp(),
+  `CheckInDate` datetime NOT NULL DEFAULT current_timestamp(),
   `CheckInTime` time DEFAULT NULL,
   `CheckOutTime` time DEFAULT NULL,
   `EmployeeId` int(11) NOT NULL,
@@ -645,7 +646,7 @@ CREATE TABLE `holidaymaster` (
   `HolidaySaka` varchar(50) DEFAULT NULL,
   `HolidayComments` varchar(200) DEFAULT NULL,
   `CreatedBy` int(11) NOT NULL,
-  `CreatedAt` date NOT NULL DEFAULT current_timestamp(),
+  `CreatedAt` datetime NOT NULL DEFAULT current_timestamp(),
   `CommentsStatus` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -1552,9 +1553,9 @@ CREATE TABLE `view_template_component` (
 --
 -- Structure for view `view_template_component`
 --
-DROP TABLE IF EXISTS `view_template_component`;
+-- DROP TABLE IF EXISTS `view_template_component`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_template_component`  AS SELECT `t1`.`TemplateComponentId` AS `TemplateComponentId`, `t1`.`TemplateId` AS `TemplateId`, `t1`.`SalaryComponentId` AS `SalaryComponentId`, `t1`.`DependentOnComponentId` AS `DependentOnComponentId`, `t1`.`IsDependentOnCTC` AS `IsDependentOnCTC`, `t1`.`CalculationMethodId` AS `CalculationMethodId`, `t1`.`NumberOrAmount` AS `NumberOrAmount`, `t2`.`Code` AS `Code`, `t2`.`CalculationMethod` AS `CalculationMethod`, `t3`.`EarningOrDeductionName` AS `EarningOrDeductionName`, `t3`.`EarningOrDeductionType` AS `EarningOrDeductionType`, `t3`.`PreTaxORPostTax` AS `PreTaxORPostTax` FROM ((`salarytemplatecomponents` `t1` left join `staticcalculationmethods` `t2` on(`t1`.`CalculationMethodId` = `t2`.`CalculationMethodId`)) join `staticsalarycomponents` `t3` on(`t3`.`SalaryComponentsId` = `t1`.`SalaryComponentId`))  ;
+-- CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `view_template_component`  AS SELECT `t1`.`TemplateComponentId` AS `TemplateComponentId`, `t1`.`TemplateId` AS `TemplateId`, `t1`.`SalaryComponentId` AS `SalaryComponentId`, `t1`.`DependentOnComponentId` AS `DependentOnComponentId`, `t1`.`IsDependentOnCTC` AS `IsDependentOnCTC`, `t1`.`CalculationMethodId` AS `CalculationMethodId`, `t1`.`NumberOrAmount` AS `NumberOrAmount`, `t2`.`Code` AS `Code`, `t2`.`CalculationMethod` AS `CalculationMethod`, `t3`.`EarningOrDeductionName` AS `EarningOrDeductionName`, `t3`.`EarningOrDeductionType` AS `EarningOrDeductionType`, `t3`.`PreTaxORPostTax` AS `PreTaxORPostTax` FROM ((`salarytemplatecomponents` `t1` left join `staticcalculationmethods` `t2` on(`t1`.`CalculationMethodId` = `t2`.`CalculationMethodId`)) join `staticsalarycomponents` `t3` on(`t3`.`SalaryComponentsId` = `t1`.`SalaryComponentId`))  ;
 
 --
 -- Indexes for dumped tables
@@ -2577,6 +2578,7 @@ ALTER TABLE `taskcategorymaster` ADD FOREIGN KEY(`CompanyId`) REFERENCES `compan
 UPDATE `companyinformation` SET `Logo` = 'Static/WiseLogoFinal.png' WHERE `companyinformation`.`CompanyId` = 1;
 ALTER TABLE `timesheet` ADD `RoleId` INT NULL AFTER `EmployeeId`;
 ALTER TABLE `timesheet` ADD FOREIGN KEY(`RoleId`) REFERENCES `static_project_roles`(`ProjectRoleId`) ON DELETE RESTRICT ON UPDATE NO ACTION;
+SET SQL_SAFE_UPDATES = 0;
 UPDATE timesheet ts INNER JOIN project_team pt ON pt.EmployeeId=ts.EmployeeId AND pt.ProjectId=ts.ProjectId SET ts.RoleId=pt.ProjectRoleId;
 ALTER TABLE `static_project_roles` DROP INDEX `DisplayDescription`;
 ALTER TABLE `static_project_roles` ADD UNIQUE(`DisplayDescription`, `CompanyId`);

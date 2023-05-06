@@ -9,6 +9,7 @@ import "../Static/Static.css";
 import ActionButton from "../../Services/ActionButton";
 import StaticListComponent from "../../Services/StaticListComponent";
 import { useDispatch } from "react-redux";
+import DeleteConfirmAlert from "../../Services/AlertComponent";
 
 const AllErrorList = () => {
   const ref = useRef();
@@ -36,6 +37,15 @@ const AllErrorList = () => {
     renderAfterCalled.current = true;
   }, []);
   const fnEdit = async (id) => await addEditModalRef.current.openModal(id || 0);
+  const onDelete = async (OfficeLocationId) => {
+    await WebService({
+      endPoint: `CommonUtility/officelocation?OfficeLocationId=${OfficeLocationId}`,
+      method: "DELETE",
+      dispatch,
+    });
+    refSnackbar.current.setOpenSnackBar();
+    await fetchOfficelocationList();
+  };
   
   const columns = [
     {
@@ -51,7 +61,7 @@ const AllErrorList = () => {
       Value: "Address",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "OfficeLocationId",
       cssClass: "text-center td-width-100",
       isVisiable: permission.ManageEdit,
@@ -63,7 +73,20 @@ const AllErrorList = () => {
             }
             disabled={!permission.ManageEdit}
             IconName="Edit"
-            id="btnErrorEdit"
+            id="btnOfficelocationEdit"
+          />
+          <ActionButton
+            onClick={(e) =>
+              ref.current.confirmAlert(
+                "Delete", //Confirm button text
+                "Are You Sure", // Text if Alert
+                "Do you want to delete " + MasterPageName, // Message of Alert
+                e.currentTarget.parentElement.getAttribute("data-key") // Endpoint to hit for delete
+              )
+            }
+            disabled={!permission.ManageDelete}
+            IconName="Delete"
+            id="btnOfficelocationDelete"
           />
 
         </>
@@ -87,6 +110,7 @@ const AllErrorList = () => {
   return (
     <>
     <SnackbarComponent ref={refSnackbar} confirmMessage={confirmMessage} />;
+    <DeleteConfirmAlert ref={ref} confirmEvent={(v) => onDelete(v)} />
     <StaticListComponent
       columns={columns}
       records={records}

@@ -45,7 +45,7 @@ const AllErrorList = () => {
       Value: "ErrorDescription",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "ErrorId",
       cssClass: "text-center td-width-100",
      // isVisiable: permission.ManageEdit,

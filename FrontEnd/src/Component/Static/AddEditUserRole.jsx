@@ -20,12 +20,13 @@ const AddEditUserRole = (prop, ref) => {
           dispatch,
         }).then((c) => map(c, (m) => ({ value: m.RoleId, text: m.RoleName }))),
         users: await WebService({
-          endPoint: "CommonUtility/employees?select=EmployeeId,FullName",
+          endPoint: `CommonUtility/employees?where=StatusId eq ${3}`,
           dispatch,
         }).then((c) =>
           map(c, (m) => ({ value: m.EmployeeId, text: m.FullName }))
         ),
       };
+      console.log("User Role",data);
       setData(data);
       setShow(true);
     },

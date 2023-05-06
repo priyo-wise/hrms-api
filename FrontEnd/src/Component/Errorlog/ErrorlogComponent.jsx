@@ -44,7 +44,7 @@ const AllErrorlogDetailsList = () => {
       Value: "ErrorDate",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "ErrorlogId",
       cssClass: "text-center td-width-100",
      // isVisiable: permission.ManageEdit,

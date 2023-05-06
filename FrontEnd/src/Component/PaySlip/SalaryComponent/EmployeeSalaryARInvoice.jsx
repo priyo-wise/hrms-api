@@ -63,7 +63,7 @@ const EmployeeSalaryARInvoiceList = () => {
       Value: "Amount",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "ARInvoiceId",
       cssClass: "text-center td-width-100",
      // isVisiable: permission.ManageEdit,

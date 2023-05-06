@@ -11,8 +11,12 @@ import AddEditComponent from "./AddEditComponentTemplate";
 import { ActionPermission, PageInfo } from "../../PageInfo";
 import ActionButton from "../../../Services/ActionButton";
 import Button from "react-bootstrap/esm/Button";
+import SnackbarComponent from "../../../Services/SnackbarComponent";
+import DeleteConfirmAlert from "../../../Services/AlertComponent";
 
-const SalaryTemplateComponent = () => {
+const SalaryTemplateComponent = () => { 
+  const ref = useRef();
+  const refSnackbar = useRef();
   var dispatch = useDispatch();
   var [data, setData] = useState([]);
   var afterRender = useRef(false);
@@ -29,23 +33,34 @@ const SalaryTemplateComponent = () => {
     ManageEdit: ActionPermission("Salary - Component Edit"),
     // ManageDelete: ActionPermission("Roles - Delete"),
   });
+  
   const onDelete = async (TemplateComponentId) => {
-    const options = {
-      labels: {
-        confirmable: "Confirm",
-        cancellable: "Cancel",
-      },
-    };
-    const result = await confirm("Are you sure you want to delete?", options);
-    if (result) {
-      await WebService({
-        endPoint: `SalaryTemplateComp/Delete/${TemplateComponentId}`,
-        method: "DELETE",
-        dispatch,
-      });
-      fetchComponentList();
-    }
+    await WebService({
+      endPoint: `SalaryTemplateComp/Delete/${TemplateComponentId}`,
+      method: "DELETE",
+      dispatch,
+    });
+    refSnackbar.current.setOpenSnackBar();
+    await fetchComponentList();
   };
+
+  // const onDelete = async (TemplateComponentId) => {
+  //   const options = {
+  //     labels: {
+  //       confirmable: "Confirm",
+  //       cancellable: "Cancel",
+  //     },
+  //   };
+  //   const result = await confirm("Are you sure you want to delete?", options);
+  //   if (result) {
+  //     await WebService({
+  //       endPoint: `SalaryTemplateComp/Delete/${TemplateComponentId}`,
+  //       method: "DELETE",
+  //       dispatch,
+  //     });
+  //     fetchComponentList();
+  //   }
+  // };
 
   const addEditModalRef = useRef();
   useEffect(() => {
@@ -73,7 +88,7 @@ const SalaryTemplateComponent = () => {
       Value: "NumberOrAmount",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "TemplateComponentId",
       isVisiable: permission.ManageEdit,
       Template: (
@@ -86,7 +101,21 @@ const SalaryTemplateComponent = () => {
             IconName="Edit"
             id="btnSalaryTemplateCompEdit"
           />
-          <button
+          
+          <ActionButton
+            onClick={(e) =>
+              ref.current.confirmAlert(
+                "Delete", //Confirm button text
+                "Are You Sure", // Text if Alert
+                "Do you want to delete " + MasterPageName, // Message of Alert
+                e.currentTarget.parentElement.getAttribute("data-key") // Endpoint to hit for delete
+              )
+            }
+            //disabled={!permission.ManageDelete}
+            IconName="Delete"
+            id="btnSalaryTemplateCompDelete"
+          />
+          {/* <button
             className="btn btn-default mt-2 mx-4"
             id="btnSalaryTemplateCompDelete"
             onClick={(e) =>
@@ -94,13 +123,18 @@ const SalaryTemplateComponent = () => {
             }
           >
             <i className="fa fa-trash"></i>
-          </button>
+          </button> */}
         </>
       ),
     },
   ];
+  
+  const MasterPageName = "Salary Template Component";
+  const confirmMessage = MasterPageName + " Deleted successfully";
   return (
     <>
+    <SnackbarComponent ref={refSnackbar} confirmMessage={confirmMessage} />
+    <DeleteConfirmAlert ref={ref} confirmEvent={(v) => onDelete(v)} />
       <Container
         style={{
           "background-color": "#FFF",
@@ -108,17 +142,17 @@ const SalaryTemplateComponent = () => {
         }}
       >
         <Row className="mt-2">
-          <Col xs={4} md={2}>
+          {/* <Col xs={4} md={2}>
             <img src="WiseLogoFinal.png" height="75" width="auto" />
-          </Col>
+          </Col> */}
           <Col
-            xs={6}
-            md={8}
+            xs={12}
+            md={12}
             className="d-flex justify-content-center align-items-center"
           >
             <h4>Template Component</h4>
           </Col>
-          <Col
+          {/* <Col
             xs={6}
             md={2}
             className="d-flex justify-content-center align-items-end flex-column"
@@ -126,7 +160,7 @@ const SalaryTemplateComponent = () => {
             <Button id="btnCalculationComponentAdd" onClick={() => fnEdit()}>
               Add +
             </Button>
-          </Col>
+          </Col> */}
         </Row>
 
         <Row>

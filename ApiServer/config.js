@@ -1,6 +1,11 @@
 const config = {
   db: {
     /* don't expose password or any sensitive info, done only for demo */
+    // host: "localhost",
+    // user: "root",
+    // password: "",
+    // database: "employees",
+    //Server DB Details
     host: "database-1.c0cm6ge9cesl.us-east-1.rds.amazonaws.com",
     user: "wise_employee",
     password: "Wise!202322",

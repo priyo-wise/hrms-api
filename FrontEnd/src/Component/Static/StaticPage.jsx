@@ -59,7 +59,7 @@ const StaticPage = () => {
       Value: "MenuText",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "PageId",
       cssClass: "text-center td-width-100",
       isVisiable: permission.ManageDelete,

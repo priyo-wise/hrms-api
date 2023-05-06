@@ -72,7 +72,7 @@ var nevigate=useNavigate();
     
     <div className="container-fluid p-md-1 justify-content-center">
       <div class="ibox-content m-b-sm border-bottom">
-        <div class="col-md-9">
+        <div class="col-md-8">
           <div class="logo-icon-company-registration">
             <img
               src={`${StandardConst.apiBaseUrl}/uploads/${(CompanyInfo ?? {}).Logo ?? ""
@@ -135,7 +135,7 @@ var nevigate=useNavigate();
             defaultValues={data}
           validationSchema={schema}
           >
-            <div className="row pt-5">
+            <div className="row">
               <div className="col-md-6 col-sm-11">
                 <h1 className="pb-4">Fill Company Details</h1>
 

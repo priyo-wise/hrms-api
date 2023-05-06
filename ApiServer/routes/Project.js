@@ -195,7 +195,7 @@ router.get(
     ), myUnderTeam as (
       select t2.* from roles t1 join project_team t2 on t2.ProjectId=t1.ProjectId and t2.ProjectRoleId=t1.ProjectRoleId
     ), teamMembers as (
-      select EmployeeId, FullName from employees where EmployeeId in (select EmployeeId from myUnderTeam) and CompanyId='${companyId}'
+      select EmployeeId, FullName,ProfileImage from employees where EmployeeId in (select EmployeeId from myUnderTeam) and CompanyId='${companyId}'
     )
     select * from teamMembers`;
       res.json(
@@ -239,7 +239,7 @@ router.get("/Team/Member", middleware.authorize, async (req, res, next) => {
     });
     if (s1.length > 0) {
       result = await query(
-        `SELECT EmployeeId, Designation, FullName, Email, Phone, staticstatus.Status, staticstatus.StatusMeaning FROM employees INNER JOIN staticstatus on employees.StatusId=staticstatus.StatusId WHERE employees.StatusId=3 AND EmployeeId in (${reduce(
+        `SELECT EmployeeId, Designation, FullName,ProfileImage, Email, Phone, staticstatus.Status, staticstatus.StatusMeaning FROM employees INNER JOIN staticstatus on employees.StatusId=staticstatus.StatusId WHERE employees.StatusId=3 AND EmployeeId in (${reduce(
           keys(groupBy(s1 ?? [], "EmployeeId")),
           (m, v) => `${m},${v}`,
           ""
@@ -258,7 +258,7 @@ router.get("/Team/Member", middleware.authorize, async (req, res, next) => {
     }
 
     if ((req.query?.search ?? "") != "") {
-      sql = `SELECT EmployeeId, Designation, FullName, Email, Phone, staticstatus.Status, staticstatus.StatusMeaning FROM employees INNER JOIN staticstatus on employees.StatusId=staticstatus.StatusId WHERE employees.StatusId=3 AND FullName LIKE '%${req.query.search}%' and CompanyId='${companyId}'`;
+      sql = `SELECT EmployeeId, Designation, FullName, Email,ProfileImage, Phone, staticstatus.Status, staticstatus.StatusMeaning FROM employees INNER JOIN staticstatus on employees.StatusId=staticstatus.StatusId WHERE employees.StatusId=3 AND FullName LIKE '%${req.query.search}%' and CompanyId='${companyId}'`;
       result = await query(sql)
         .then((r) =>
           map(

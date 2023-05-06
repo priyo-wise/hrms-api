@@ -8,6 +8,7 @@ import "../Static/Static.css";
 import ActionButton from "../../Services/ActionButton";
 import StaticListComponent from "../../Services/StaticListComponent";
 import DeleteConfirmAlert from "../../Services/AlertComponent";
+import SnackbarComponent from "../../Services/SnackbarComponent";
 
 const PayslipComponent = () => {
   const MasterPageName = "Salary Payslip";
@@ -104,7 +105,7 @@ const PayslipComponent = () => {
       cssClass: "text-center",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       cssClass: "text-center td-width-100",
       render: (dr) => (
         <>
@@ -142,8 +143,10 @@ const PayslipComponent = () => {
       ),
     },
   ];
+  
   return (
     <>
+    <SnackbarComponent ref={refSnackbar} confirmMessage={confirmMessage} />
       <DeleteConfirmAlert ref={ref} confirmEvent={(v) => onDelete(v)} />
       <StaticListComponent
         columns={columns}

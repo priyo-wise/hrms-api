@@ -56,7 +56,7 @@ const JobFunction = () => {
       Value: "JobDescription",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "JobFunctionId",
       cssClass: "text-center td-width-100",
       isVisiable: permission.ManageEdit || permission.ManageDelete,

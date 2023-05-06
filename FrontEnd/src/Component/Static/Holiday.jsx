@@ -70,7 +70,7 @@ const HolidayMaster = () => {
       Value: "HolidayComments",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       cssClass: "text-center td-width-100",
       isVisiable: permission.ManageEdit || permission.ManageDelete,
       render: (dr)=>(

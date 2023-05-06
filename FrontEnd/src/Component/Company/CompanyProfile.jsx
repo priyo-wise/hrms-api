@@ -50,7 +50,7 @@ const CompanyList = () => {
       Value: "Phone",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "CompanyId",
       cssClass: "text-center td-width-100",
      // isVisiable: permission.ManageEdit,

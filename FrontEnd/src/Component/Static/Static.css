@@ -28,6 +28,10 @@
   font-style: normal;
   font-weight: 900;
 }
+th {
+  font-weight: bold !important;  
+  font-size: 0.925rem !important;
+}
 .td-width-5 {
   width: 500px !important;
 }

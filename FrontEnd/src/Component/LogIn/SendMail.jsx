@@ -36,38 +36,42 @@ function MydModalWithGrid(props) {
     <Modal {...props} aria-labelledby="contained-modal-title-vcenter">
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          Enter Email
+          Forgot Password
         </Modal.Title>
       </Modal.Header>
       <Form onSubmit={submit} validationSchema={schema}>
         <Modal.Body className="show-grid">
-          <Container>
-            <div className="col-md-12">
-              <FormInputText label="Email" name="Email" type="text" />
-            </div>
-          </Container>
+          <div className="col-md-12">
+            <FormInputText
+              label="Enter Registered Email"
+              name="Email"
+              type="text"
+            />
+          </div>
+          
+          
         </Modal.Body>
-
-        <div className="row col-md-12 p-3 m-2  mb-4">
-          <div className="col-6 mt-2">
-            <Button
-              className="p-2 radius bg-light text-dark rounded btn-md w-75 col-4"
-              id="btnMailCancel"
-              onClick={props.onHide}
-            >
-              Cancel
-            </Button>
+        
+          <div className="row m-2  mb-4">
+            <div className="col-6 px-2 mt-2">
+              <Button
+                className="btn-block b-app p-2 radius bg-light text-dark rounded btn-md  col-12"
+                id="btnMailCancel"
+                onClick={props.onHide}
+              >
+                Cancel
+              </Button>
+            </div>
+            <div className="col-6 text-end mt-2">
+              <Button
+                className="btn-block b-app  p-2 radius text-light rounded btn-md col-12"
+                id="btnMailSubmit"
+                type="submit"
+              >
+                Submit
+              </Button>
+            </div>
           </div>
-          <div className="col-6 text-end mt-2">
-            <Button
-              className=" b-app  p-2 radius text-light rounded btn-md w-75 col-6"
-              id="btnMailSubmit"
-              type="submit"
-            >
-              Submit
-            </Button>
-          </div>
-        </div>
       </Form>
     </Modal>
   );

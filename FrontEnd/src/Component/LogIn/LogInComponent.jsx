@@ -36,7 +36,7 @@ const LogIn = () => {
     });
   };
   const dispatch = useDispatch();
-  const requiredMessage = "Field is a required";
+  const requiredMessage = "This is a required field";
   const schema = yup
     .object()
     .shape({
@@ -193,7 +193,7 @@ const LogIn = () => {
                   </div>
                   {((CompanyInfo ?? {}).IsDefault ?? 0) == 1 && (
                     <>
-                      <small class="font-weight-bold">
+                      <small class="px-3 font-weight-bold">
                         <Link
                           class="text-danger"
                           id="btnCompanyRegister"

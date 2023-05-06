@@ -1,0 +1,39 @@
+{
+    "manifestVersion": 1,
+    "id": "wise-first-extension",
+    "publisher": "wise-software-solutions",
+    "version": "1.0.0",
+    "name": "Wise Time Sheet Extension",
+    "description": "A sample Visual Studio Services extension",
+    "public": false,
+    "categories": ["Azure Boards"],
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],
+    "contributions": [
+        {
+            "id": "wise-work-item-form-group",
+            "type": "ms.vss-work-web.work-item-form-group",
+            "targets": [
+                "ms.vss-work-web.work-item-form"
+            ],
+            "properties": {
+                "name": "Log time in Wise",
+                "uri": "index.html"
+            }
+        }
+    ],
+    "files": [
+        {
+            "path": "index.html",
+            "addressable": true
+        },
+        {
+            "path": "node_modules/vss-web-extension-sdk/lib",
+            "addressable": true,
+            "packagePath": "lib"
+        }
+    ]
+}

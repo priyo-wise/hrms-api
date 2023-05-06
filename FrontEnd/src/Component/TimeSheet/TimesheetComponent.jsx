@@ -51,12 +51,13 @@ const TimeSheetDateWiseSummary = (prop) => {
         callBackEvent={() => fetchTimeSheetSummaryList()}
         ref={addEditModalRef}
       ></AddEditTimeSheet>
-
+<br></br>
       <Container className="px-4">
         {data.map((m, i) => {
           return (
             <>
               <Row key={i} className="m-0">
+                
                 <Col md={10}>
                   <h6>
                     {m.ProjectName} - {m.TaskCategoryName}
@@ -267,10 +268,16 @@ const TimeSheet = () => {
         <Row>
           <Col className="col-md-12 d-flex align-items-center justify-content-end">
             <div style={{ marginRight: "100px" }}>
-              <strong>Total: {weekDays[key]?.totalHour} </strong>
+              <strong>Total: {weekDays[key]?.totalHour} hr</strong>
             </div>
           </Col>
-        </Row>
+        </Row>   
+         <div className="row m-2  mb-4">
+            <div className="text-left mt-2">
+              <a className="btn btn-outline-primary p-2 col-2" href="/">Back</a>
+              
+            </div>
+          </div>
       </Container>
     </>
   );

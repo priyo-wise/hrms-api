@@ -57,9 +57,8 @@ const LeaveType = () => {
       Value: "LeaveDescription",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "LeaveId",
-      style:{width:"60px",padding:"0px"},
       isVisiable: permission.ManageEdit || permission.ManageDelete,
       Template: (
         <>

@@ -1,5 +1,11 @@
 /* #region Import */
-import React, { useEffect, useState, useRef } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import "./EditProfile.css";
 import { WebService } from "../../Services/WebService";
 import { StandardConst } from "../../Services/StandardConst";
@@ -10,7 +16,6 @@ import ViewDocument from "./ViewDocument";
 import Swal from "sweetalert2";
 import _, { each, findWhere, omit } from "underscore";
 import format from "date-fns/format";
-
 import {
   Alert,
   Avatar,
@@ -22,9 +27,9 @@ import {
 } from "@mui/material";
 import MButton from "@mui/material/Button";
 import * as yup from "yup";
-import { InputDropdown, FormInputText, Form } from "../Form";
+import { InputDropdown, FormInputText, Form, InputText } from "../Form";
 import TableComponent from "../../Services/TableComponent";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import SnackbarComponent from "../../Services/SnackbarComponent";
 import DeleteConfirmAlert from "../../Services/AlertComponent";
 import StaticListComponent from "../../Services/StaticListComponent";
@@ -34,12 +39,13 @@ import { ActionPermission } from "../PageInfo";
 
 /* #endregion */
 const Profile = () => {
+  const [text, setText] = useState("");
+
   const [permission] = useState({
     ManageReject: ActionPermission("EmployeeDocument - Reject"),
     ManageApprove: ActionPermission("EmployeeDocument - Approve"),
     ManageView: ActionPermission("EmployeeDocument - View"),
   });
-  console.log("permission",permission);
   const { state } = useLocation();
   const EmpId = state?.EmpId ?? 0;
   const dispatch = useDispatch();
@@ -53,6 +59,8 @@ const Profile = () => {
   const renderAfterCalled = useRef(false);
   const viewModalRef = useRef();
   const [show, setShow] = useState(false);
+  const [userDOB, setUserDOB] = useState();
+  const [empDOJ,setDOJ]=useState();
   const [ApproveData, setData] = useState({
     FromDate: null,
     ToDate: null,
@@ -64,6 +72,7 @@ const Profile = () => {
 
       fetchProfile();
       fetchFamily();
+      GenerateToken();
       fetchEmployeeDocuments(EmpId);
       getManagerByRole();
       getsetlocation();
@@ -83,10 +92,20 @@ const Profile = () => {
     if ((data[0]?.DOJ || "") !== "")
       data[0].DOJ = format(new Date(data[0].DOJ), "yyyy-MM-dd");
 
+    setUserDOB(data[0]?.DOB);
     setDp(data[0]?.ProfileImage ?? null);
     setRecords(data);
-  };
+    console.log("photo",dp);
 
+  };
+  const GenerateToken = async () => {
+    const data = await WebService({
+      endPoint: `User/Token`,
+      method: "Get",
+      dispatch,
+    });
+    console.log(data);
+  };
   const fetchEmployeeDocuments = async () => {
     const data = await WebService({
       endPoint: `DocumentType/DocumentDetails/${EmpId || 0}`,
@@ -105,7 +124,10 @@ const Profile = () => {
 
   const fnView = async (id) => await viewModalRef.current.openModal(id || 0);
 
-  const schema = yup.object().shape({}).required();
+  const requiredMessage = "This is a required field";
+  const schema = yup.object().shape({
+   // DOJ: yup.string().trim().required(requiredMessage),
+  }).required();
 
   const [approvedData, setApprovedData] = React.useState({});
 
@@ -120,31 +142,41 @@ const Profile = () => {
     // });
   };
   const approveRejectEmployee = async (status) => {
+    
     var statusTest = null;
     if (status == 3) {
       statusTest = "Approved";
     } else {
       statusTest = "Rejected";
     }
-    const result = await WebService({
-      endPoint: `UserProfile/CreateEmployeeManager/${status}/${EmpId}/${status}`,
-      body: {},
-      dispatch,
-    });
-
-    if (result.message == "Document Approval is pending") {
+    if(records[0].DOJ==null && statusTest == "Approved"){
       Swal.fire({
         title: "Pending",
-        text: result.message,
+        text: "Please Enter Employee's Date Of joining",
         icon: "error",
       });
-    } else {
-      Swal.fire({
-        title: statusTest,
-        text: result.message,
-        icon: "info",
+    }else{
+      const result = await WebService({
+        endPoint: `UserProfile/CreateEmployeeManager/${status}/${EmpId}/${status}`,
+        body: {},
+        dispatch,
       });
-
+  
+      if (result.message == "Document Approval is pending") {
+        Swal.fire({
+          title: "Pending",
+          text: result.message,
+          icon: "error",
+        });
+      } else {
+        Swal.fire({
+          title: statusTest,
+          text: result.message,
+          icon: "info",
+        });
+  
+    }
+    
       Navigate("/RegistrationApproval", { state: { EmpId: null } });
     }
   };
@@ -230,7 +262,9 @@ const Profile = () => {
       Anniversary: Anniversary?.value ?? null,
     };
     details.EmployeeId = records[0]?.EmployeeId;
+    console.log("details",details);
     WebService({
+      dispatch,
       endPoint: "UserProfile/Update",
       method: "POST",
       body: details,
@@ -241,6 +275,7 @@ const Profile = () => {
         icon: "info",
       });
       fetchProfile();
+      GenerateToken();
     });
   };
   const [open, setOpen] = React.useState(false);
@@ -256,7 +291,6 @@ const Profile = () => {
   };
 
   const createNotification = async () => {
-    console.log("hay");
     var Notification = {};
     Notification.Title = "Document Approve Reject";
     Notification.Subject =
@@ -333,21 +367,66 @@ const Profile = () => {
     setShow(RelationShip);
   };
 
+  // const onSubmitDocument = async (data) => {
+  //   const formData = new FormData();
+  //   formData.append("image", file);
+  //   formData.append("EmployeeId", records[0].EmployeeId);
+  //   try {
+  //     await axios({
+  //       method: "post",
+  //       dispatch,
+  //       url: "http://localhost:3001/upload/uploadProfile",
+  //       data: formData,
+  //       headers: { "Content-Type": "multipart/form-data" },
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
   const onSubmitDocument = async (data) => {
-    const formData = new FormData();
-    formData.append("image", file);
-    formData.append("EmployeeId", records[0].EmployeeId);
-    try {
-      await axios({
-        method: "post",
-        url: "http://localhost:3001/upload/uploadProfile",
-        data: formData,
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    const imgfilename = await WebService({
+      endPoint: "upload/File",
+      body: file,
+      dispatch,
+      isFile: true,
+    }).then((res) => res.filename);
+    
+    let userphotodata={
+      ProfileimgName:imgfilename,
+      userId:records[0]?.EmployeeId,
+    };
+    const responsedata = await WebService({
+      endPoint: "UserProfile/UpdateProfile",
+      body:userphotodata,
+      dispatch,
+    });
+    // .then((res) => {
+    //   Swal.fire({
+    //     title: "Profile",
+    //     text: "Photo Updated",
+    //     icon: "info",
+    //   });
+    //   fetchProfile();
+    // });
+
   };
+
+  // const onSubmitDocument = async (data) => {
+  //   data.FilePath = await WebService({
+  //     endPoint: "upload/File",
+  //     dispatch,
+  //     body: data.File,
+  //     isFile: true,
+  //   }).then((res) => res.filename);
+  //   await WebService({
+  //     dispatch,
+  //     endPoint: "User/Document",
+  //     body: extend(omit(data, ["File"]), { EmployeeId }),
+  //   });
+  //   await getDocuments();
+  //   resetDocumentForm.current.fnReset({ File: null });
+  // };
   const addEditModalRef = useRef();
   const confirmMessage = " Deleted successfully";
   const fnEdit = async (id) => await addEditModalRef.current.openModal(id || 0);
@@ -365,7 +444,7 @@ const Profile = () => {
       Value: "Status",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "DocumentId",
       cssClass: "text-end",
       isVisiable:
@@ -449,7 +528,7 @@ const Profile = () => {
       Value: "BloodGroup",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "FamilyId",
       cssClass: "text-center td-width-100",
       //isVisiable: permission.ManageEdit || permission.ManageDelete,
@@ -481,79 +560,93 @@ const Profile = () => {
       ),
     },
   ];
-
+  const GetTokenComponentRef = useRef();
   return (
-    <Container className="base-container" fluid>
-      <div>
-        <Modal
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box sx={style}>
-            <img src={` ${StandardConst.uploadImages}${viewDoc}`} />
-          </Box>
-        </Modal>
-      </div>
-      <form onSubmit={handleSubmit}>
-        {records.map((user) => (
-          <div>
-            <div key={user.EmpId}>
-              <div className="row p-0 equal mb-2">
-                <div className="col-md-4 ">
-                  <div className="card shadow-none border-0 border-end border-bottom bg-light footer-widget">
-                    <div className="card-body">
-                      <div className="d-flex flex-column align-items-center text-center">
-                        <div className="pic-holder">
+    <>
+      <Container className="base-container" fluid>
+        <div>
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <img src={` ${StandardConst.uploadImages}${viewDoc}`} />
+            </Box>
+          </Modal>
+        </div>
+        <form onSubmit={handleSubmit}>
+          {records.map((user) => (
+            <div>
+              <div key={user.EmpId}>
+                <div className="row p-0 equal mb-2">
+                  <div className="col-md-4 ">
+                    <div className="card shadow-none border-0 border-end border-bottom bg-light footer-widget">
+                      <div className="card-body">
+                        <div className="d-flex flex-column align-items-center text-center">
+                          <div className="pic-holder">
                           <img
-                            id="profilePic"
-                            className="pic rounded-circle p-1 bg-primary"
-                            src={`${StandardConst.uploadImages}${dp}`}
-                          />
+                                  className="pic rounded-circle p-1"
+                                  src={`${StandardConst.apiBaseUrl}/uploads/${dp ?? "" }`}
+                                  alt="logo"
+                          /> 
 
-                          <input
-                            className="uploadProfileInput"
-                            type="file"
-                            name="profile_pic"
-                            id="newProfilePhoto"
-                            accept="image/*"
-                            style={{ opacity: "0" }}
-                            onChange={saveFile}
-                          />
-                          <label
-                            htmlFor="newProfilePhoto"
-                            className="upload-file-block"
+                            <input
+                              className="uploadProfileInput"
+                              type="file"
+                              name="File"
+                              id="newProfilePhoto"
+                              accept="image/*"
+                              style={{ opacity: "0" }}
+                              onChange={saveFile}
+                            />
+                            <label
+                              htmlFor="newProfilePhoto"
+                              className="upload-file-block"
+                            >
+                              <div className="text-center">
+                                <div className="mb-2">
+                                  <i className="fa fa-camera fa-2x"></i>
+                                </div>
+                                <div className="text-uppercase">
+                                  Update <br /> Profile Photo
+                                </div>
+                              </div>
+                            </label>
+                          </div>
+                          <button
+                            className="btn btn-outline-primary"
+                            id="btnProfileUpload"
+                            onClick={onSubmitDocument}
                           >
-                            <div className="text-center">
-                              <div className="mb-2">
-                                <i className="fa fa-camera fa-2x"></i>
-                              </div>
-                              <div className="text-uppercase">
-                                Update <br /> Profile Photo
-                              </div>
-                            </div>
-                          </label>
-                        </div>
-                        <button
-                          className="btn btn-outline-primary"
-                          id="btnProfileUpload"
-                          onClick={onSubmitDocument}
-                        >
-                          {" "}
-                          Upload
-                        </button>
-                        <div className="mt-1">
-                          <h4>{user.FullName}</h4>
-                          <p className="text-secondary mb-1">
-                            {user.Designation}
-                          </p>
-                          <p className="text-muted font-size-sm">
-                            Code: {user.EmployeeCode}
-                          </p>
-                        </div>
-                        {/* <hr className="my-4" /> */}
-                        {/* <ul className="list-group list-group-flush">
+                            {" "}
+                            Upload
+                          </button>
+                          <div className="mt-1">
+                            <h4>{user.FullName}</h4>
+                            <p className="text-secondary mb-1">
+                              {user.Designation}
+                            </p>
+                            <p className="text-muted font-size-sm">
+                              Code: {user.EmployeeCode}
+                            </p>
+
+                            <button
+                              onClick={GetTokenComponentRef.current.getToken}
+                              className="btn btn-success mx-2"
+                            >
+                              {" "}
+                              <i
+                                class="fa fa-share-alt"
+                                aria-hidden="true"
+                              ></i>{" "}
+                              Generate Token
+                            </button>
+                          </div>
+
+                          {/* <hr className="my-4" /> */}
+                          {/* <ul className="list-group list-group-flush">
                           <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                             <h6 className="mb-0">
                               <svg
@@ -673,388 +766,457 @@ const Profile = () => {
                             <span className="text-secondary">bootdey</span>
                           </li>
                         </ul> */}
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="card-footer mt-2">
-                      <div className="d-flex  justify-content-around">
-                        <button
-                          type="submit"
-                          id="btnSubmit"
-                          className="btn btn-primary mx-2"
-                        >
-                          <i
-                            class="fa fa-cloud-download"
-                            aria-hidden="true"
-                          ></i>{" "}
-                          ID Card
-                        </button>
-                        <button
-                          type="submit"
-                          id="btnSubmit"
-                          className="btn btn-success mx-2"
-                          value="Save Changes"
-                        >
-                          {" "}
-                          <i class="fa fa-share-alt" aria-hidden="true"></i> ID
-                          Card
-                        </button>
+                      <div className="card-footer mt-2">
+                        <div className="d-flex  justify-content-around">
+                          <button
+                            type="submit"
+                            id="btnSubmit"
+                            className="btn btn-primary mx-2"
+                          >
+                            <i
+                              class="fa fa-cloud-download"
+                              aria-hidden="true"
+                            ></i>{" "}
+                            ID Card
+                          </button>
+                          <button
+                            type="submit"
+                            id="btnSubmit"
+                            className="btn btn-success mx-2"
+                            value="Save Changes"
+                          >
+                            {" "}
+                            <i
+                              class="fa fa-share-alt"
+                              aria-hidden="true"
+                            ></i>{" "}
+                            ID Card
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="col-md-8">
-                  <div className="card shadow-none border-0  border-start border-bottom   footer-widget">
-                    <div className="card-body">
-                      <div className="row">
-                        <div className="col-sm-3">
-                          <h6 className="mb-0">Full Name</h6>
-                        </div>
-                        <div className="col-sm-9 text-secondary">
-                          <input type="hidden" id="EmpId" value={user.EmpId} />
-
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="FullName"
-                            defaultValue={user.FullName}
-                          />
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-sm-3">
-                          <h6 className="mb-0">Email</h6>
-                        </div>
-                        <div className="col-sm-9 text-secondary">
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="Email"
-                            defaultValue={user.Email}
-                            disabled
-                          />
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-sm-3">
-                          <h6 className="mb-0">Phone</h6>
-                        </div>
-                        <div className="col-sm-9 text-secondary">
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="Phone"
-                            defaultValue={user.Phone}
-                          />
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-sm-3">
-                          <h6 className="mb-0">Emergency Phone</h6>
-                        </div>
-                        <div className="col-sm-9 text-secondary">
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="EmergencyPhone"
-                            defaultValue={user.EmergencyPhone}
-                          />
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-sm-3">
-                          <h6 className="mb-0">Permanent Address</h6>
-                        </div>
-                        <div className="col-sm-9 text-secondary">
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="PermanentAddress"
-                            defaultValue={user.PermanentAddress}
-                          />
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-sm-3">
-                          <h6 className="mb-0">Address</h6>
-                        </div>
-                        <div className="col-sm-9 text-secondary">
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="CommunicationAddress"
-                            defaultValue={user.CommunicationAddress}
-                          />
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-sm-3">
-                          <h6 className="mb-0">Qualification</h6>
-                        </div>
-                        <div className="col-sm-9 text-secondary">
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="Qualifications"
-                            defaultValue={user.Qualifications}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="row">
-                        <div className="col-sm-3">
-                          <h6 className="mb-0">Date Of Birth</h6>
-                        </div>
-                        <div className="col-sm-9 text-secondary">
-                          <input
-                            type="date"
-                            className="form-control"
-                            id="DOB"
-                            defaultValue={user.DOB}
-                          />
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-sm-3">
-                          <h6 className="mb-0">Date Of Joining</h6>
-                        </div>
-                        <div className="col-sm-9 text-secondary">
-                          <input
-                            type="date"
-                            className="form-control"
-                            id="DOJ"
-                            defaultValue={user.DOJ}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="row">
-                        <div className="col-sm-3">
-                          <h6 className="mb-0">RelationShip Status</h6>
-                        </div>
-                        <div className="col-sm-9 text-secondary">
-                          {user.Anniversary > "01-01-1970" ? (
-                            <select
-                              id="RelationShip"
-                              className="form-control"
-                              onChange={myFunction}
-                              disabled
-                            >
-                              <option value="Married">Married</option>
-                            </select>
-                          ) : (
-                            <select
-                              id="RelationShip"
-                              className="form-control"
-                              onChange={myFunction}
-                            >
-                              <option value="UnMarried">UnMarried</option>
-                              <option value="Married">Married</option>
-                            </select>
-                          )}
-                        </div>
-                      </div>
-
-                      {show == "Married" || user.Anniversary > "01-01-1970" ? (
+                  <div className="col-md-8">
+                    <div className="card shadow-none border-0  border-start border-bottom   footer-widget">
+                      <div className="card-body">
                         <div className="row">
                           <div className="col-sm-3">
-                            <h6>Anniversary Date</h6>
+                            <h6 className="mb-0">Full Name</h6>
+                          </div>
+                          <div className="col-sm-9 text-secondary">
+                            <input
+                              type="hidden"
+                              id="EmpId"
+                              value={user.EmpId}
+                            />
+
+                            <input
+                              type="text"
+                              className="form-control"
+                              id="FullName"
+                              defaultValue={user.FullName}
+                            />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="col-sm-3">
+                            <h6 className="mb-0">Email</h6>
+                          </div>
+                          <div className="col-sm-9 text-secondary">
+                            <input
+                              type="text"
+                              className="form-control"
+                              id="Email"
+                              defaultValue={user.Email}
+                              disabled
+                            />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="col-sm-3">
+                            <h6 className="mb-0">Phone</h6>
+                          </div>
+                          <div className="col-sm-9 text-secondary">
+                            <input
+                              type="text"
+                              className="form-control"
+                              id="Phone"
+                              defaultValue={user.Phone}
+                            />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="col-sm-3">
+                            <h6 className="mb-0">Emergency Phone</h6>
+                          </div>
+                          <div className="col-sm-9 text-secondary">
+                            <input
+                              type="text"
+                              className="form-control"
+                              id="EmergencyPhone"
+                              defaultValue={user.EmergencyPhone}
+                            />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="col-sm-3">
+                            <h6 className="mb-0">Permanent Address</h6>
+                          </div>
+                          <div className="col-sm-9 text-secondary">
+                            <input
+                              type="text"
+                              className="form-control"
+                              id="PermanentAddress"
+                              defaultValue={user.PermanentAddress}
+                            />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="col-sm-3">
+                            <h6 className="mb-0">Address</h6>
+                          </div>
+                          <div className="col-sm-9 text-secondary">
+                            <input
+                              type="text"
+                              className="form-control"
+                              id="CommunicationAddress"
+                              defaultValue={user.CommunicationAddress}
+                            />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="col-sm-3">
+                            <h6 className="mb-0">Qualification</h6>
+                          </div>
+                          <div className="col-sm-9 text-secondary">
+                            <input
+                              type="text"
+                              className="form-control"
+                              id="Qualifications"
+                              defaultValue={user.Qualifications}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="row">
+                          <div className="col-sm-3">
+                            <h6 className="mb-0">Date Of Birth</h6>
                           </div>
                           <div className="col-sm-9 text-secondary">
                             <input
                               type="date"
                               className="form-control"
-                              id="Anniversary"
-                              defaultValue={user.Anniversary}
+                              id="DOB"
+                              defaultValue={user.DOB}
                             />
                           </div>
                         </div>
-                      ) : (
-                        ""
-                      )}
-                    </div>
+                        <div className="row">
+                          <div className="col-sm-3">
+                            <h6 className="mb-0">Date Of Joining</h6>
+                          </div>
+                          <div className="col-sm-9 text-secondary">
+                            <input
+                              type="date"
+                              className="form-control"
+                              id="DOJ"
+                              defaultValue={user.DOJ}
+                            />
+                          </div>
+                        </div>
 
-                    <div className="card-footer mt-2">
-                      <input
-                        type="submit"
-                        id="btnSubmit"
-                        className="btn btn-primary px-4 w-25 float-end"
-                        value="Save Changes"
-                      />
+                        <div className="row">
+                          <div className="col-sm-3">
+                            <h6 className="mb-0">RelationShip Status</h6>
+                          </div>
+                          <div className="col-sm-9 text-secondary">
+                            {user.Anniversary > "01-01-1970" ? (
+                              <select
+                                id="RelationShip"
+                                className="form-control"
+                                onChange={myFunction}
+                                disabled
+                              >
+                                <option value="Married">Married</option>
+                              </select>
+                            ) : (
+                              <select
+                                id="RelationShip"
+                                className="form-control"
+                                onChange={myFunction}
+                              >
+                                <option value="UnMarried">UnMarried</option>
+                                <option value="Married">Married</option>
+                              </select>
+                            )}
+                          </div>
+                        </div>
+
+                        {show == "Married" ||
+                        user.Anniversary > "01-01-1970" ? (
+                          <div className="row">
+                            <div className="col-sm-3">
+                              <h6>Anniversary Date</h6>
+                            </div>
+                            <div className="col-sm-9 text-secondary">
+                              <input
+                                type="date"
+                                className="form-control"
+                                id="Anniversary"
+                                defaultValue={user.Anniversary}
+                              />
+                            </div>
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+
+                      <div className="card-footer mt-2">
+                        <input
+                          type="submit"
+                          id="btnSubmit"
+                          className="btn btn-primary px-4 w-25 float-end"
+                          value="Save Changes"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-      </form>
-      <div>
-        {records.map((user) => (
-          <div key={user.EmpId}>
-            <div>
-              <Paper elevation={1} className="mb-3">
-                <Alert severity="info">
-                  <strong>Documents</strong>
-                </Alert>
-                <TableComponent
-                  columns={columns}
-                  data={doc}
-                  IsAddButtonVisible={false}
-                  isSearchRequired={false}
+          ))}
+        </form>
+        <div>
+          {records.map((user) => (
+            <div key={user.EmpId}>
+              <div>
+                <Paper elevation={1} className="mb-3">
+                  <Alert severity="info">
+                    <strong>Documents</strong>
+                  </Alert>
+                  <TableComponent
+                    columns={columns}
+                    data={doc}
+                    IsAddButtonVisible={false}
+                    isSearchRequired={false}
+                  />
+                </Paper>
+                <DeleteConfirmAlert
+                  ref={ref}
+                  confirmEvent={(v) => onRemove(v)}
                 />
-              </Paper>
-              <DeleteConfirmAlert ref={ref} confirmEvent={(v) => onRemove(v)} />
-              <Paper elevation={2} className="mb-2">
-                <Alert>
-                  <strong>Family Details</strong>
-                </Alert>
+                <Paper elevation={2} className="mb-2">
+                  <Alert>
+                    <strong>Family Details</strong>
+                  </Alert>
 
-                <TableComponent
-                  columns={details}
-                  data={info}
-                  onAddEvent={() => fnEdit()}
-                  isSearchRequired={true}
-                />
-                <AddEditFamilyDetails
-                  callBackEvent={() => fetchFamily()}
-                  ref={addEditModalRef}
-                ></AddEditFamilyDetails>
-              </Paper>
-              <div className="row mb-2">
-                <div
-                  className={`col-sm-12 ${
-                    records[0].StatusId == 3 ? "d-none" : ""
-                  }`}
-                >
-                  <Form
-                    defaultValues={approvedData}
-                    onSubmit={onApprovalSubmit}
-                    validationSchema={schema}
+                  <TableComponent
+                    columns={details}
+                    data={info}
+                    onAddEvent={() => fnEdit()}
+                    isSearchRequired={true}
+                  />
+                  <AddEditFamilyDetails
+                    callBackEvent={() => fetchFamily()}
+                    ref={addEditModalRef}
+                  ></AddEditFamilyDetails>
+                </Paper>
+                <div className="row mb-2">
+                  <div
+                    className={`col-sm-12 ${
+                      records[0].StatusId == 3 ? "d-none" : ""
+                    }`}
                   >
-                    <Paper elevation={1} className="mt-2">
-                      <Alert severity="info">
-                        <strong> Select Manager & Approve Employee</strong>
-                      </Alert>
-                      <div className="row text-center">
-                        <div className="col-md-4 mt-3">
-                          <InputDropdown
-                            name="ManagerId"
-                            id="ManagerId"
-                            ddOpt={ManagerData}
-                            label="Select Manager"
-                            setValue={(v) =>
-                              setData({ ...ApproveData, ManagerId: v })
-                            }
-                          ></InputDropdown>
-                        </div>
+                    <Form
+                      defaultValues={approvedData}
+                      onSubmit={onApprovalSubmit}
+                      validationSchema={schema}
+                    >
+                      <Paper elevation={1} className="mt-2">
+                        <Alert severity="info">
+                          <strong> Select Manager & Approve Employee</strong>
+                        </Alert>
+                        <div className="row text-center">
+                          <div className="col-md-4 mt-3">
+                            <InputDropdown
+                              name="ManagerId"
+                              id="ManagerId"
+                              ddOpt={ManagerData}
+                              label="Select Manager"
+                              setValue={(v) =>
+                                setData({ ...ApproveData, ManagerId: v })
+                              }
+                            ></InputDropdown>
+                          </div>
 
-                        <div className="col-md-5  mt-3">
-                          <FormInputText
-                            label="Remarks"
-                            id="ApproveRejectReason"
-                            name="ApproveRejectReason"
-                            type="text"
-                          />
-                        </div>
-                        <div className="col-md-2  mt-3">
-                          <ButtonGroup
-                            disableElevation
-                            variant="outlined"
-                            color="primary"
-                            aria-label="Disabled elevation buttons"
-                          >
-                            <MButton
-                              type="button"
-                              id="btnApproveRejectEmployee"
-                              onClick={() => approveRejectEmployee(3)}
+                          <div className="col-md-5  mt-3">
+                            <FormInputText
+                              label="Remarks"
+                              id="ApproveRejectReason"
+                              name="ApproveRejectReason"
+                              type="text"
+                            />
+                          </div>
+                          <div className="col-md-2  mt-3">
+                            <ButtonGroup
+                              disableElevation
+                              variant="outlined"
+                              color="primary"
+                              aria-label="Disabled elevation buttons"
                             >
-                              Approve
-                            </MButton>
-                            <MButton
-                              className="text-danger"
-                              id="btnProfileReject"
-                              onClick={() => approveRejectEmployee(4)}
-                            >
-                              Reject
-                            </MButton>
-                          </ButtonGroup>
+                              <MButton
+                                type="button"
+                                id="btnApproveRejectEmployee"
+                                onClick={() => approveRejectEmployee(3)}
+                              >
+                                Approve
+                              </MButton>
+                              <MButton
+                                className="text-danger"
+                                id="btnProfileReject"
+                                onClick={() => approveRejectEmployee(4)}
+                              >
+                                Reject
+                              </MButton>
+                            </ButtonGroup>
+                          </div>
                         </div>
-                      </div>
-                    </Paper>
-                  </Form>
+                      </Paper>
+                    </Form>
 
-                  <ViewDocument ref={viewModalRef} />
+                    <ViewDocument ref={viewModalRef} />
+                  </div>
                 </div>
-              </div>
 
-              <div className="row mb-2">
-                <div
-                  className={`col-sm-12 ${
-                    records[0].StatusId == 3 ? "d-none" : ""
-                  }`}
-                >
-                  <Form
-                    defaultValues={approvelocationData}
-                    validationSchema={schema}
+                <div className="row mb-2">
+                  <div
+                    className={`col-sm-12 ${
+                      records[0].StatusId == 3 ? "d-none" : ""
+                    }`}
                   >
-                    <Paper elevation={1}>
-                      <Alert severity="info">
-                        <strong>Assign Employee Office location</strong>
-                      </Alert>
-                      <div className="row text-center">
-                        <div className="col-md-4 mt-3">
-                          <InputDropdown
-                            name="OfficeLocationId"
-                            id="OfficeLocationId"
-                            ddOpt={locationData}
-                            label="Select Location"
-                            setValue={(v) =>
-                              setlocatiinData({
-                                ...officelocationData,
-                                OfficeLocationId: v,
-                              })
-                            }
-                          ></InputDropdown>
-                        </div>
+                    <Form
+                      defaultValues={approvelocationData}
+                      validationSchema={schema}
+                    >
+                      <Paper elevation={1}>
+                        <Alert severity="info">
+                          <strong>Assign Employee Office location</strong>
+                        </Alert>
+                        <div className="row text-center">
+                          <div className="col-md-4 mt-3">
+                            <InputDropdown
+                              name="OfficeLocationId"
+                              id="OfficeLocationId"
+                              ddOpt={locationData}
+                              label="Select Location"
+                              setValue={(v) =>
+                                setlocatiinData({
+                                  ...officelocationData,
+                                  OfficeLocationId: v,
+                                })
+                              }
+                            ></InputDropdown>
+                          </div>
 
-                        <div className="col-md-5  mt-3">
-                          <FormInputText
-                            label="Remarks"
-                            id="Assignlocation"
-                            name="Assignlocation"
-                            type="text"
-                          />
-                        </div>
-                        <div className="col-md-2  mt-3">
-                          <ButtonGroup
-                            disableElevation
-                            variant="outlined"
-                            color="primary"
-                            aria-label="Disabled elevation buttons"
-                          >
-                            <MButton
-                              type="button"
-                              id="btnAssignOfficelocation"
-                              onClick={() => assignOfficelocation()}
+                          <div className="col-md-5  mt-3">
+                            <FormInputText
+                              label="Remarks"
+                              id="Assignlocation"
+                              name="Assignlocation"
+                              type="text"
+                            />
+                          </div>
+                          <div className="col-md-2  mt-3">
+                            <ButtonGroup
+                              disableElevation
+                              variant="outlined"
+                              color="primary"
+                              aria-label="Disabled elevation buttons"
                             >
-                              Assign
-                            </MButton>
-                          </ButtonGroup>
+                              <MButton
+                                type="button"
+                                id="btnAssignOfficelocation"
+                                onClick={() => assignOfficelocation()}
+                              >
+                                Assign
+                              </MButton>
+                            </ButtonGroup>
+                          </div>
                         </div>
-                      </div>
-                    </Paper>
-                  </Form>
+                      </Paper>
+                    </Form>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      <></>
-    </Container>
+          ))}
+        </div>
+      </Container>
+      <GetTokenComponent ref={GetTokenComponentRef} />
+    </>
   );
 };
+
+const GetTokenComponent = forwardRef(({}, ref) => {
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 4,
+  };
+  const dispatch = useDispatch();
+  const [tokenValue, setTokenValue] = useState("");
+  const [open, setOpen] = React.useState(false);
+  const copy = () => {
+    navigator.clipboard.writeText(tokenValue);
+    alert("Token number copied");
+  };
+  const getToken = () => {
+    WebService({ dispatch, endPoint: "User/Token" }).then((c) => {
+      console.log(c);
+      setTokenValue(c);
+      handleOpen();
+    });
+  };
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  useImperativeHandle(
+    ref,
+    () => ({
+      getToken,
+    }),
+    []
+  );
+  return (
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Typography id="modal-modal-title" variant="h6" component="h2">
+          Token Number
+        </Typography>
+        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          <InputText as="textarea" value={tokenValue} readOnly={true} />
+
+          <button onClick={copy} className="btn btn-success">
+            <i class="fa fa-copy" aria-hidden="true"></i> Copy Generate Token
+          </button>
+        </Typography>
+      </Box>
+    </Modal>
+  );
+});
 
 export default Profile;

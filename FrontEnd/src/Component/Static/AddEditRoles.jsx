@@ -50,7 +50,7 @@ const AddEditRoles = (prop, ref) => {
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
-        <Modal.Title>
+        <Modal.Title className="px-2">
           {(data.Roles.RoleId || 0) === 0 ? "Add Role" : "Edit Role"}
         </Modal.Title>
       </Modal.Header>
@@ -72,7 +72,7 @@ const AddEditRoles = (prop, ref) => {
           </div>
         </Modal.Body>
         <hr />
-        <div className="row col-md-12 p-3 m-2  mb-4">
+        <div className="row py-2 m-2  mb-4">
           <div className="col-6 mt-2">
             <Button
               className="p-2 radius bg-light text-dark rounded btn-md w-75 col-4"

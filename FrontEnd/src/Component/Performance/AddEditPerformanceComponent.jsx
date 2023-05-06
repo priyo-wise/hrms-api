@@ -110,7 +110,7 @@ const AddEditPerformanceComponent = (prop, ref) => {
     },
   }));
   const handleClose = () => setShow(false);
-  const requiredMessage = "Field is a required";
+  const requiredMessage = "This is a required field";
   const ratingRangeErrorMessage = "Range between 1 to 5";
   const schema = yup
     .object()

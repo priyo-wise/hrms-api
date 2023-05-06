@@ -55,7 +55,7 @@ const SalaryComponent = () => {
       Value: "CalculationMethod",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "CalculationMethodId",
       Template: (
         <>

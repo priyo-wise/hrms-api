@@ -55,7 +55,7 @@ const EmployeePackageDetails = () => {
       Value: "Amount",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "EmployeePackageId",
       Template: (
         <>

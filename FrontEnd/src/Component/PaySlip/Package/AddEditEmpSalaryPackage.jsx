@@ -41,7 +41,7 @@ const AddEditEmpSalaryPackage = forwardRef(({}, ref) => {
   const [componentList, setComponentList] = useState([]);
   const formRef = useRef();
   const afterRender = useRef(false);
-  const requiredMessage = "Field is a required";
+  const requiredMessage = "This is a required field";
   const schema = yup
     .object()
     .shape({

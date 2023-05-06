@@ -75,7 +75,7 @@ const FinanceTemplate = () => {
       Value: "FullName",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       key: "FinanceId",
       Template: (
         <>

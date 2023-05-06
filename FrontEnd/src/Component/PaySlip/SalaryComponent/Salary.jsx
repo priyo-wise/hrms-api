@@ -82,7 +82,7 @@ const Salary = () => {
     },
 
     {
-      Text: "ACTION",
+      Text: "Action",
       cssClass: "w-30 d-flex float-end",
       key: "SalaryComponentsId",
       isVisiable: permission.ManageEdit,
@@ -140,7 +140,7 @@ const Salary = () => {
       Value: "PreTaxORPostTax",
     },
     {
-      Text: "ACTION",
+      Text: "Action",
       cssClass: "w-30 d-flex float-end",
       key: "SalaryComponentsId",
       isVisiable: permission.ManageEdit,

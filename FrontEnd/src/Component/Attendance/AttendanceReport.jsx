@@ -85,7 +85,7 @@ const AttendanceReport = () => {
     console.log("res", res);
     setData(res);
   };
-  const requiredMessage = "field is a required";
+  const requiredMessage = "This is a required field";
   const schema = yup
     .object()
     .shape({
@@ -148,9 +148,8 @@ const AttendanceReport = () => {
     <>
       {data === null && (
         <div>
-          <h3>Attendance Report</h3>
-          <Card className="mt-1 border border-danger" style={{ width: "100%" }}>
-            <Card.Body>
+          <h3 class="px-4">Attendance Report</h3>
+        <div style={{ backgroundColor: "#1976D2" }} className="pt-4 px-4">            
               <Form
                 defaultValues={filter}
                 onSubmit={onSubmit}
@@ -162,6 +161,7 @@ const AttendanceReport = () => {
                       label="From Date"
                       name="FromDate"
                       type="date"
+                      labelCss="text-light"
                       setValue={setFromdate}
                       max={(todate ?? "") == "" ? undefined : todate}
                     />
@@ -170,36 +170,34 @@ const AttendanceReport = () => {
                     <FormInputText
                       label="To Date"
                       name="ToDate"
+                      labelCss="text-light"
                       type="date"
                       setValue={setTodate}
                       min={(fromdate ?? "") == "" ? undefined : fromdate}
                     />
                   </Col>
-                </Row>
-                <Row className="mt-2">
-                  <Col md={4}>
+                  <Col className="col-md-3">
                     <FormInputDropdown
                       name="EmployeeId"
                       ddOpt={persons ?? []}
                       label="Person"
+                      labelCss="text-light"
                     />
                   </Col>
-                </Row>
-                <Row className="mt-2">
-                  <Col>
-                    <Button
-                      id="btnRunReport"
-                      variant="outline-primary"
-                      type="submit"
-                    >
-                      Run Report
-                    </Button>
-                  </Col>
+                  <Col className="col-md-3">
+                  <Button
+                    id="btnRunReport"
+                    variant="outline-light"
+                    type="submit"
+                    className="float-end"
+                  >
+                  Run Report
+                </Button>
+              </Col>
                 </Row>
               </Form>
-            </Card.Body>
-          </Card>
         </div>
+          </div>
       )}
     </>
   );

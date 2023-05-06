@@ -56,8 +56,8 @@ const Roles = () => {
       Value: "RoleName",
     },
     {
-      Text: "ACTION",
-      style: {width:"60px", padding:"0px"},
+      Text: "Action",
+      cssClass: "text-center td-width-100",
       isVisiable: permission.ManageEdit || permission.ManageDelete,
       render: (dr) => (
         <>
