@@ -6,9 +6,9 @@ export const StandardConst = {
   // images: "http://localhost:3001/images/",
   // uploadImages: "http://localhost:3001/uploads/",
   //Server Base URL
-  apiBaseUrl: "http://54.196.184.46:3000",
-  images: "http://54.196.184.46:3000/images/",
-  uploadImages: "http://54.196.184.46:3000/uploads/",
+  apiBaseUrl: "http://34.229.95.111:3000",
+  images: "http://34.229.95.111:3000/images/",
+  uploadImages: "http://34.229.95.111:3000/uploads/",
   employeeId: "1",
   forgotPassword: forgotPasswordSvg,
   userLoginSvg: userLoginSvg,
