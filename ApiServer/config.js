@@ -10,7 +10,7 @@ const config = {
     user: "wise_employee",
     password: "Wise!202322",
     database: "employees",
-    // timezone: "utc",
+    timezone: "utc",
   },
   listPerPage: 10,
   secret_key: "hjjlkljkljklklj89789ujklj",
