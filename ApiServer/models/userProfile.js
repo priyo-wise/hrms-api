@@ -98,7 +98,7 @@ where rls.roleId=${roleId}`
 }
 async function getMultiple(page = 1) {
   const offset = helper.getOffset(page, config.listPerPage);
-  const rows = await db.query(`SELECT * FROM Employees`);
+  const rows = await db.query(`SELECT * FROM employees`);
   const data = helper.emptyOrRows(rows);
   const meta = { page };
 
@@ -121,7 +121,7 @@ async function getUserProfile(employeeId) {
   );
   return helper.emptyOrRows(rows);
 }
-//`SELECT t1.*,t2.FullName,t3.RoleName from UserRoles t1 join Employees t2 on t1.EmployeeId=t2.EmployeeId join StaticRoles t3 on t1.RoleId=t3.RoleId`;
+//`SELECT t1.*,t2.FullName,t3.RoleName from UserRoles t1 join employees t2 on t1.EmployeeId=t2.EmployeeId join StaticRoles t3 on t1.RoleId=t3.RoleId`;
 
 async function fetchByEmpId(employeeId) {
   const rows = await db.query(
@@ -149,7 +149,7 @@ async function create(performance) {
 
 async function UpdateUserProfile(userProfile) {
   const result = await db.query(
-    `UPDATE Employees SET Email = '${userProfile.Email}', FullName='${userProfile.FullName}',
+    `UPDATE employees SET Email = '${userProfile.Email}', FullName='${userProfile.FullName}',
     PermanentAddress = '${userProfile.PermanentAddress}', CommunicationAddress = '${userProfile.CommunicationAddress}', DOB = '${userProfile.DOB}', DOJ ='${userProfile.DOJ}', EmergencyPhone ='${userProfile.EmergencyPhone}', 
     Phone = '${userProfile.Phone}', Qualifications = '${userProfile.Qualifications}', Anniversary = '${userProfile.Anniversary}' WHERE EmployeeId = '${userProfile.EmployeeId}';`
   );
@@ -166,7 +166,7 @@ async function UpdateUserProfile(userProfile) {
 async function UpdateUserProfilePhoto(userProfile) {
   console.log("userProfile",userProfile);
   const result = await db.query(
-    `UPDATE Employees SET ProfileImage = '${userProfile.ProfileimgName}' WHERE EmployeeId = '${userProfile.userId}';`
+    `UPDATE employees SET ProfileImage = '${userProfile.ProfileimgName}' WHERE EmployeeId = '${userProfile.userId}';`
   );
   let message = "Error in updating User Profile";
 
